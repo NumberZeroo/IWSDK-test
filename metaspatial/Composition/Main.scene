@@ -5,7 +5,7 @@ entities:
           {}
         com.meta.components.Scene:
           nodes:
-            - ref:welcomePanel
+            - ref:promptPanel
             - ref:plantSansevieria
             - ref:robot
             - ref:Environment
@@ -44,9 +44,9 @@ entities:
       tag: Environment
     - components:
         com.iwsdk.components.AudioSource:
+          playbackMode: 3
           maxInstances: 3
           src: /audio/chime.mp3
-          playbackMode: 3
         com.iwsdk.components.Interactable:
           {}
         com.iwsdk.components.Robot:
@@ -106,7 +106,7 @@ entities:
         com.iwsdk.components.Interactable:
           {}
         com.iwsdk.components.PanelUI:
-          config: /ui/welcome.uikitml
+          config: /ui/prompt.uikitml
         com.iwsdk.components.ScreenSpace:
           left: 20px
           top: 20px
@@ -114,7 +114,7 @@ entities:
         com.meta.components.Animatable:
           {}
         com.meta.components.Name:
-          name: welcomePanel
+          name: promptPanel
         com.meta.components.PointerNodeInverseComponent:
           {}
         com.meta.components.SceneNode:
@@ -130,6 +130,6 @@ entities:
           componentVersion: 1
         com.meta.components.Visibility:
           visible: true
-      tag: welcomePanel
+      tag: promptPanel
 metadata:
   version: 1.34
