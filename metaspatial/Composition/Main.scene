@@ -44,8 +44,8 @@ entities:
       tag: Environment
     - components:
         com.iwsdk.components.AudioSource:
-          playbackMode: 3
           maxInstances: 3
+          playbackMode: 3
           src: /audio/chime.mp3
         com.iwsdk.components.Interactable:
           {}

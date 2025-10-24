@@ -1,0 +1,28 @@
+entities:
+  components:
+    com.meta.components.Name:
+      name: EnvironmentAmbientLight
+    com.meta.components.PbrMaterial:
+      alphaCutoff: 0.5
+      alphaMode: Blend
+      baseColorFactor.colorspace: RGB
+      baseColorFactor.type: color4
+      baseColorTextureTransform.scale:
+        - 1
+        - 1
+      emissiveFactor.colorspace: RGB
+      emissiveFactor.type: color4
+      sheenColorFactor.colorspace: RGB
+      sheenColorFactor.type: color3
+      specularColorFactor.colorspace: RGB
+      specularColorFactor.type: color3
+      volumeAttenuationColor.colorspace: RGB
+      volumeAttenuationColor.type: color3
+      componentVersion: 1
+      baseColorTexture.texture: ref:texture6
+    com.meta.components.PointerNodeInverseComponent:
+      {}
+    com.meta.components.StandardMaterial:
+      isDoubleSided: true
+metadata:
+  version: 1.34

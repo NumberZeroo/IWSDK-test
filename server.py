@@ -13,7 +13,7 @@ CORS(
 )
 
 # Percorso del modello nella directory 'models'
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "modello_a_caso.glb")
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "super_mario_bros_coin.glb")
 
 @app.route("/generate", methods=["POST"])
 def generate_glb():

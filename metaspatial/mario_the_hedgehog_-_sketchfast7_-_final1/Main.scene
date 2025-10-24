@@ -1,0 +1,565 @@
+entities:
+  com.meta.models.Scene:
+    - components:
+        com.meta.components.Name:
+          {}
+        com.meta.components.Scene:
+          nodes:
+            - ref:Sketchfab_model
+      tag: Scene
+  com.meta.models.SceneNode:
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: EnvironmentAmbientLight
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+          children:
+            - ref:EnvironmentAmbientLight2
+        com.meta.components.Visibility:
+          visible: true
+      tag: EnvironmentAmbientLight
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Sketchfab_model
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.707106769
+            - -0.707106769
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+          children:
+            - ref:Collada visual scene group
+        com.meta.components.Visibility:
+          visible: true
+      tag: Sketchfab_model
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: EnvironmentAmbientLight
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+        com.meta.components.Visibility:
+          visible: true
+      tag: EnvironmentAmbientLight2
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_R_UpperArm
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.825108767
+            - 0.458307892
+            - -0.237457246
+            - -0.229703024
+          rotation.format: Quaternion
+          scale:
+            - 0.999999821
+            - 0.999999881
+            - 0.999999881
+          translation:
+            - 6.60541582
+            - 0
+            - 0
+          componentVersion: 1
+          children:
+            - ref:Bip002_R_Forearm
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_R_UpperArm
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_Neck
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - -2.84217501e-14
+            - 0
+            - -1.49011496e-08
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          translation:
+            - 7.38761902
+            - -0.00304031395
+            - -8.4182803e-09
+          componentVersion: 1
+          children:
+            - ref:Bip002_R_Clavicle
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_Neck
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_Spine2
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.996153116
+            - 8.91608374e-16
+            - 2.4304947e-07
+            - -0.0876295641
+          rotation.format: Quaternion
+          scale:
+            - 1.00000024
+            - 1.00000012
+            - 1
+          translation:
+            - 5.24995422
+            - -0.0057926178
+            - -1.60653002e-08
+          componentVersion: 1
+          children:
+            - ref:Bip002_Neck
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_Spine2
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_R_Forearm
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.904198766
+            - -1.44199772e-08
+            - 4.63498839e-09
+            - -0.427111894
+          rotation.format: Quaternion
+          scale:
+            - 0.99999994
+            - 1
+            - 1
+          translation:
+            - 16.7212105
+            - 0
+            - 0
+          componentVersion: 1
+          children:
+            - ref:Bip002_R_Hand
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_R_Forearm
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Collada visual scene group
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+          children:
+            - ref:Plane001
+            - ref:Bip002
+            - ref:Sonic
+            - ref:EnvironmentAmbientLight
+        com.meta.components.Visibility:
+          visible: true
+      tag: Collada visual scene group
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Box001
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.983870447
+            - 0.0429568924
+            - -0.00757445255
+            - -0.173482865
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1.00000024
+            - 1.00000012
+          translation:
+            - 17.4346695
+            - 4.3757782
+            - 10.1304102
+          componentVersion: 1
+          children:
+            - ref:Object_15
+        com.meta.components.Visibility:
+          visible: true
+      tag: Box001
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Sonic
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+          children:
+            - ref:baked_02_-_Default1
+        com.meta.components.Visibility:
+          visible: true
+      tag: Sonic
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Plane001
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          translation:
+            - 0.572975218
+            - -2.72656298
+            - -7.64911079
+          componentVersion: 1
+          children:
+            - ref:_5_-_Default_11
+        com.meta.components.Visibility:
+          visible: true
+      tag: Plane001
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.7044155
+            - 0.0616284609
+            - -0.0616284609
+            - 0.704416573
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          translation:
+            - 0
+            - 0
+            - 69.0423965
+          componentVersion: 1
+          children:
+            - ref:Bip002_Pelvis
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Box
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+        com.meta.components.SceneNodeMesh:
+          mesh: ref:Box
+        com.meta.components.Visibility:
+          visible: true
+      tag: Box1
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: _5_-_Default_1
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+        com.meta.components.SceneNodeMesh:
+          mesh: ref:_5_-_Default_1
+        com.meta.components.Visibility:
+          visible: true
+      tag: _5_-_Default_11
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_Pelvis
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.500000656
+            - -0.499999344
+            - -0.50000006
+            - -0.50000006
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+          children:
+            - ref:Bip002_Spine
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_Pelvis
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: baked_02_-_Default
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          componentVersion: 1
+        com.meta.components.SceneNodeMesh:
+          mesh: ref:baked_02_-_Default
+        com.meta.components.Visibility:
+          visible: true
+      tag: baked_02_-_Default1
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_Spine
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.99999994
+            - -2.08047504e-06
+            - -6.93677521e-07
+            - 0.000398110744
+          rotation.format: Quaternion
+          scale:
+            - 1.00000012
+            - 1.00000012
+            - 1
+          translation:
+            - 5.84324598
+            - -0.00418376923
+            - 8.1092403e-06
+          componentVersion: 1
+          children:
+            - ref:Bip002_Spine1
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_Spine
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_Spine1
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.99716717
+            - 0
+            - 2.08623504e-07
+            - -0.075217478
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          translation:
+            - 5.25035906
+            - -0.00413322402
+            - -1.14651e-08
+          componentVersion: 1
+          children:
+            - ref:Bip002_Spine2
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_Spine1
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_R_Clavicle
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.104929775
+            - -0.649613559
+            - -0.119504109
+            - 0.743445158
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 0.99999994
+            - 0.999999881
+          translation:
+            - 7.62938998e-06
+            - 0.00304412795
+            - -2.1169219
+          componentVersion: 1
+          children:
+            - ref:Bip002_R_UpperArm
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_R_Clavicle
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Bip002_R_Hand
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 0.282176256
+            - 0.943876088
+            - -0.136823565
+            - -0.103700504
+          rotation.format: Quaternion
+          scale:
+            - 1.00000012
+            - 1
+            - 1
+          translation:
+            - 17.8992805
+            - 3.81469999e-06
+            - 0
+          componentVersion: 1
+          children:
+            - ref:Box001
+        com.meta.components.Visibility:
+          visible: true
+      tag: Bip002_R_Hand
+    - components:
+        com.meta.components.Animatable:
+          {}
+        com.meta.components.Name:
+          name: Object_15
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+        com.meta.components.SceneNode:
+          rotation.data:
+            - 1
+            - 0
+            - 0
+            - 0
+          rotation.format: Quaternion
+          scale:
+            - 1
+            - 1
+            - 1
+          translation:
+            - 0
+            - 0
+            - 64.7702866
+          componentVersion: 1
+          children:
+            - ref:Box1
+        com.meta.components.Visibility:
+          visible: true
+      tag: Object_15
+metadata:
+  version: 1.34

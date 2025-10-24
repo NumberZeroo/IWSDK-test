@@ -1,0 +1,154 @@
+scene: docref:Main.scene
+entities:
+  com.meta.models.AssetFolder:
+    - components:
+        com.meta.components.AssetFolder:
+          assets:
+            - ref:image0
+            - ref:image1
+            - ref:image2
+            - ref:2_-_Default__Sonic
+            - ref:EnvironmentAmbientLight1
+            - ref:material
+            - ref:Box
+            - ref:_5_-_Default_1
+            - ref:baked_02_-_Default
+        com.meta.components.Name:
+          name: mario_the_hedgehog_-_sketchfast7_-_final
+  com.meta.models.AssetRoot:
+    - components:
+        com.meta.components.AssetMetadata:
+          {}
+        com.meta.components.AssetRoot:
+          defaultScene: ref:Scene
+          scenes:
+            - ref:Scene
+  com.meta.models.Geometry:
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry.bin
+          mode: Triangles
+      tag: Geometry
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry1.bin
+          mode: Triangles
+      tag: Geometry1
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry2.bin
+          mode: Triangles
+      tag: Geometry2
+  com.meta.models.Image:
+    - components:
+        com.meta.components.Asset:
+          path: assets/image2.png
+        com.meta.components.Image:
+          height: 256
+          mimeType: image/png
+          width: 256
+        com.meta.components.Name:
+          name: image2
+      tag: image2
+    - components:
+        com.meta.components.Asset:
+          path: assets/image0.png
+        com.meta.components.Image:
+          height: 2048
+          mimeType: image/png
+          width: 2048
+        com.meta.components.Name:
+          name: image0
+      tag: image0
+    - components:
+        com.meta.components.Asset:
+          path: assets/image1.png
+        com.meta.components.Image:
+          height: 512
+          mimeType: image/png
+          width: 512
+        com.meta.components.Name:
+          name: image1
+      tag: image1
+  com.meta.models.Material:
+    - uri: docref:materials/material.metaspatialmaterial
+      tag: material
+    - uri: docref:materials/2_-_Default__Sonic.metaspatialmaterial
+      tag: 2_-_Default__Sonic
+    - uri: docref:materials/EnvironmentAmbientLight1.metaspatialmaterial
+      tag: EnvironmentAmbientLight1
+  com.meta.models.Mesh:
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive
+        com.meta.components.Name:
+          name: _5_-_Default_1
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: _5_-_Default_1
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive1
+        com.meta.components.Name:
+          name: Box
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Box
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive2
+        com.meta.components.Name:
+          name: baked_02_-_Default
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: baked_02_-_Default
+  com.meta.models.Primitive:
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry1
+          material: ref:EnvironmentAmbientLight1
+      tag: Primitive
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry
+          material: ref:material
+      tag: Primitive1
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry2
+          material: ref:2_-_Default__Sonic
+      tag: Primitive2
+  com.meta.models.Sampler:
+    - components:
+        com.meta.components.Name:
+          name: sampler3
+        com.meta.components.Sampler:
+          magFilter: Linear
+          minFilter: LinearMipmapLinear
+          wrapS: Repeat
+          wrapT: Repeat
+      tag: sampler3
+  com.meta.models.Texture:
+    - uri: docref:textures/texture6.metaspatialtexture
+      tag: texture6
+    - uri: docref:textures/texture4.metaspatialtexture
+      tag: texture4
+    - uri: docref:textures/texture5.metaspatialtexture
+      tag: texture5
+metadata:
+  version: 1.34

@@ -10,6 +10,9 @@ import {
   AudioUtils,
   AudioSource,
   Entity,
+  Interactable,
+  OneHandGrabbable,
+  DistanceGrabbable,
 } from "@iwsdk/core";
 
 export class PanelSystem extends createSystem({
@@ -20,7 +23,7 @@ export class PanelSystem extends createSystem({
 }) {
   // memorizzo l’entità musicale per riutilizzarla
   private musicEntity?: Entity;
-  // percorso file audio (cambialo se serve)
+  
   private static readonly MUSIC_SRC = "/audio/lofi-chill.mp3";
 
   init() {
@@ -32,7 +35,14 @@ export class PanelSystem extends createSystem({
       const textPrompt = document.getElementById("text-area") as UIKit.Text;
 
       generaButton.addEventListener("click", () => {
+        // Log del prompt per debug locale
         console.log("Prompt inserito:", textPrompt.currentSignal.v);
+
+        if (!textPrompt.currentSignal.v) {
+          
+          console.warn("Nessun prompt inserito.");
+          return;
+        }
 
         fetch("http://127.0.0.1:5000/generate", {
           method: "POST",
@@ -47,14 +57,23 @@ export class PanelSystem extends createSystem({
           })
           .then(() => {
             const { scene: dynamicMesh } = AssetManager.getGLTF("dynamicModel");
-            dynamicMesh.position.set(1, 3, -3);
-            dynamicMesh.grabbing = { enabled: true }; //TODO
+            dynamicMesh.position.set(0, 1, -2);
+            console.log("dynamicMesh:", dynamicMesh);
+            
+            const ent =  this.world.createTransformEntity(dynamicMesh)
 
-            this.world.createTransformEntity(dynamicMesh);
+            setTimeout(() => {
+            ent.addComponent(Interactable)
+            ent.addComponent(DistanceGrabbable, {
+                translate: true,
+                rotate: true,
+                scale: true,
+            });
+          }, 100);
           })
           .catch((error) => {
             console.error("Failed to load dynamic asset:", error);
-          });
+          });  
       });
 
       // Button per avviare la musica in loop

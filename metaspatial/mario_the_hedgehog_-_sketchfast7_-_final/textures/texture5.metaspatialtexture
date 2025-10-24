@@ -1,0 +1,9 @@
+entities:
+  components:
+    com.meta.components.Name:
+      name: texture5
+    com.meta.components.Texture:
+      image: ref:image1
+      sampler: ref:sampler3
+metadata:
+  version: 1.34
