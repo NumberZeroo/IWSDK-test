@@ -9,7 +9,7 @@ CORS(
     resources={r"/generate": {"origins": ["https://localhost:8081", "https://127.0.0.1:8081"]}},
     methods=["POST", "OPTIONS"],
     allow_headers=["Content-Type"],
-    expose_headers=["Content-Disposition"]  # utile se vuoi leggere il filename lato client
+    expose_headers=["Content-Disposition"]
 )
 
 # Percorso del modello nella directory 'models'

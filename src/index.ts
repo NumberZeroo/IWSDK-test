@@ -32,7 +32,6 @@ World.create(document.getElementById("scene-container") as HTMLDivElement, {
   xr: {
     sessionMode: SessionMode.ImmersiveVR,
     offer: "always",
-    // Optional structured features; layers/local-floor are offered by default
     features: { handTracking: true, layers: true },
   },
   features: {

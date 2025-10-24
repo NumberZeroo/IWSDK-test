@@ -13,6 +13,7 @@ import {
   Interactable,
   OneHandGrabbable,
   DistanceGrabbable,
+  XRInputManager,
 } from "@iwsdk/core";
 
 export class PanelSystem extends createSystem({
@@ -39,7 +40,8 @@ export class PanelSystem extends createSystem({
         console.log("Prompt inserito:", textPrompt.currentSignal.v);
 
         if (!textPrompt.currentSignal.v) {
-          
+          //Modifica il pannello per indicare che il prompt è vuoto
+          textPrompt.setProperties({ placeholder: "Inserisci un prompt valido." });
           console.warn("Nessun prompt inserito.");
           return;
         }
