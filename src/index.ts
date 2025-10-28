@@ -30,9 +30,16 @@ const assets: AssetManifest = {
 World.create(document.getElementById("scene-container") as HTMLDivElement, {
   assets,
   xr: {
-    sessionMode: SessionMode.ImmersiveVR,
+    sessionMode: SessionMode.ImmersiveAR, //O ImmersiveVR
     offer: "always",
-    features: { handTracking: true, layers: true },
+      features: {
+        handTracking: true,
+        anchors: true,
+        hitTest: true,
+        planeDetection: true,
+        meshDetection: true,
+        layers: true,
+    },
   },
   features: {
     locomotion: { useWorker: true },

@@ -27,9 +27,9 @@ export class ErrorPanel extends createSystem({
       if (!document) return;
     });
 
-      function showError() {
-      const errorText = document.getElementById("testo-errore") as UIKit.Text;
-      errorText.setProperties({ text: "Si è verificato un errore." });
+    void function showError() {
+    const errorText = this.world.getElementById("error-panel") as UIKit.Container;
+    errorText.setProperties({ visibility: true });
     }
   }
 }

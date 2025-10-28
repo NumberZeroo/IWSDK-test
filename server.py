@@ -6,11 +6,12 @@ app = Flask(__name__)
 
 CORS(
     app,
-    resources={r"/generate": {"origins": ["https://localhost:8081", "https://127.0.0.1:8081"]}},
-    methods=["POST", "OPTIONS"],
-    allow_headers=["Content-Type"],
-    expose_headers=["Content-Disposition"]
+    resources={r"/generate": {"origins": "*"}},
+    methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"],
+    allow_headers="*",
+    expose_headers="*"
 )
+
 
 # Percorso del modello nella directory 'models'
 MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "super_mario_bros_coin.glb")
@@ -31,5 +32,7 @@ def generate_glb():
     )
 
 if __name__ == "__main__":
-    # Avvia il server Flask
-    app.run(host="0.0.0.0", port=5000)
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+    )

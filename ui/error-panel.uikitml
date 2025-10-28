@@ -1,5 +1,4 @@
 <style>
-
   .error-panel-container {
     align-items: flex-start;
     padding: 2;
@@ -50,7 +49,7 @@
 
 </style>
 
-<div class="error-panel-container">
+<div class="error-panel-container" id="error-panel">
   <div class="heading-error">Errore</div>
   <div class="testo-errore" id="text-area">Riprova la generazione, il prompt non deve mancare.</div>
   <div class="button-error" id="close-button">Chiudi</div>

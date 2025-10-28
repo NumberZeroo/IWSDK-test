@@ -59,11 +59,11 @@
   }
 </style>
 
-<div class="main-container">
+<div class="main-container" id="pannello-prompt">
   <div class="outer-panel">
     <div class="panel-container">
       <span class="heading">Inserisci il tuo prompt:</span>
-      <input type="text" id="text-area" placeholder="Enter your prompt here…"/>
+      <input type="text" id="text-area" placeholder="Inserisci il tuo prompt qui…"/>
       
       <div style="width: 100%; display: flex; flex-direction: row; gap: 2;">
         <button class="button" id="genera-button">Genera</button>

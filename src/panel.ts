@@ -14,6 +14,8 @@ import {
   OneHandGrabbable,
   DistanceGrabbable,
   XRInputManager,
+  MovementMode,
+  TwoHandsGrabbable
 } from "@iwsdk/core";
 
 export class PanelSystem extends createSystem({
@@ -46,7 +48,7 @@ export class PanelSystem extends createSystem({
           return;
         }
 
-        fetch("http://127.0.0.1:5000/generate", {
+        fetch("/api/generate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ prompt: textPrompt.currentSignal.v }),
@@ -66,16 +68,70 @@ export class PanelSystem extends createSystem({
 
             setTimeout(() => {
             ent.addComponent(Interactable)
-            ent.addComponent(DistanceGrabbable, {
+            .addComponent(TwoHandsGrabbable, {
                 translate: true,
                 rotate: true,
-                scale: true,
-            });
+                scale: true
+            })
           }, 100);
+          
+          //Nascondo il pannello dopo la generazione
+          const pannelloPrompt = document.getElementById("pannello-prompt") as UIKit.Container;
+          pannelloPrompt.setProperties({ visibility: false });
           })
           .catch((error) => {
             console.error("Failed to load dynamic asset:", error);
+            textPrompt.setProperties({ placeholder: "Errore nella generazione!!." });
+            console.warn("Errore nella generazione!!.");
           });  
+      });
+
+      //Button per no-rigging
+      const noRiggingButton = document.getElementById("no-rigging-button") as UIKit.Text;
+      noRiggingButton.addEventListener("click", () => {
+        // Log del prompt per debug locale
+        console.log("Prompt inserito:", textPrompt.currentSignal.v);
+
+        if (!textPrompt.currentSignal.v) {
+          //Modifica il pannello per indicare che il prompt è vuoto
+          textPrompt.setProperties({ placeholder: "Inserisci un prompt valido." });
+          console.warn("Nessun prompt inserito.");
+          return;
+        }
+
+        fetch("http://127.0.0.1:5000/generate-no-rigging", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ prompt: textPrompt.currentSignal.v }),
+        })
+          .then(async (response) => {
+            if (!response.ok) throw new Error(await response.text());
+            const blob = await response.blob();
+            const glbUrl = URL.createObjectURL(blob);
+            return AssetManager.loadGLTF(glbUrl, "dynamicModel");
+          })
+          .then(() => {
+            const { scene: dynamicMesh } = AssetManager.getGLTF("dynamicModel");
+            dynamicMesh.position.set(0, 1, -2);
+            console.log("dynamicMesh:", dynamicMesh);
+            const ent = this.world.createTransformEntity(dynamicMesh)
+
+            setTimeout(() => {
+            ent.addComponent(Interactable)
+            .addComponent(DistanceGrabbable, {
+                movementMode: MovementMode.MoveFromTarget,
+            });
+          }, 100);
+          
+          //Nascondo il pannello dopo la generazione
+          const pannelloPrompt = document.getElementById("pannello-prompt") as UIKit.Container;
+          pannelloPrompt.setProperties({ visibility: false });
+          })
+          .catch((error) => {
+            console.error("Failed to load dynamic asset:", error);
+            textPrompt.setProperties({ placeholder: "Errore nella generazione!!." });
+            console.warn("Errore nella generazione!!.");
+          });
       });
 
       // Button per avviare la musica in loop
