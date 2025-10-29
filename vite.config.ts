@@ -4,7 +4,7 @@ import { discoverComponents, generateGLXF } from "@iwsdk/vite-plugin-metaspatial
 import { compileUIKit } from "@iwsdk/vite-plugin-uikitml";
 import { defineConfig } from "vite";
 import mkcert from "vite-plugin-mkcert";
-import type { ServerOptions } from "https"; // <-- per tipizzare https:{}
+import type { ServerOptions } from "https";
 
 export default defineConfig({
   plugins: [
