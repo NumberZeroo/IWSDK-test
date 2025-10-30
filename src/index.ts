@@ -8,6 +8,7 @@ import {
   SRGBColorSpace,
   AssetManager,
   World,
+  XRInputManager
 } from "@iwsdk/core";
 
 import { PanelSystem } from "./panel.js";
@@ -66,6 +67,21 @@ World.create(document.getElementById("scene-container") as HTMLDivElement, {
   world.createTransformEntity(logoBanner);
   logoBanner.position.set(0, 1, 1.8);
   logoBanner.rotateY(Math.PI);
+
+  const scene = world.scene;
+      
+  const xrInput = new XRInputManager({ scene, camera });
+  
+  const rightPad = xrInput.gamepads.right;
+  if(rightPad){
+    console.log("Right pad connected:", rightPad);
+  }
+  else{
+    console.log("Right pad not connected");
+  }
+  if(rightPad?.getButtonPressed('xr-standard-trigger')){
+    console.log("Right trigger is pressed");
+  }
 
   world.registerSystem(PanelSystem).registerSystem(RobotSystem);
 });
