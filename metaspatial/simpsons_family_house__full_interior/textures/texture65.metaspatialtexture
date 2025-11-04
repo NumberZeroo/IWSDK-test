@@ -1,0 +1,9 @@
+entities:
+  components:
+    com.meta.components.Name:
+      name: texture65
+    com.meta.components.Texture:
+      image: ref:image25
+      sampler: ref:sampler39
+metadata:
+  version: 1.34

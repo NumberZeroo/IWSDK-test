@@ -15,6 +15,8 @@ import { PanelSystem } from "./panel.js";
 
 import { RobotSystem } from "./robot.js";
 
+import { EnvironmentType, LocomotionEnvironment } from "@iwsdk/core";
+
 const assets: AssetManifest = {
   chimeSound: {
     url: "/audio/chime.mp3",
@@ -24,6 +26,16 @@ const assets: AssetManifest = {
   webxr: {
     url: "/textures/webxr.png",
     type: AssetType.Texture,
+    priority: "critical",
+  },
+    simpHouse: {
+    url: "/gltf/simp/scene.gltf",
+    type: AssetType.GLTF,
+    priority: "critical",
+  },
+    environmentDesk: {
+    url: "/gltf/environmentDesk/environmentDesk.gltf",
+    type: AssetType.GLTF,
     priority: "critical",
   },
 };
@@ -54,6 +66,14 @@ World.create(document.getElementById("scene-container") as HTMLDivElement, {
 
   camera.position.set(-4, 1.5, -6);
   camera.rotateY(-Math.PI * 0.75);
+
+  const { scene: envMeshOrigin } = AssetManager.getGLTF("simpHouse")!;
+  const envMesh = envMeshOrigin.clone(true);
+  envMesh.rotateY(Math.PI);
+  envMesh.position.set(0, -0.1, 0);
+  world
+    .createTransformEntity(envMesh)
+    .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
 
   const webxrLogoTexture = AssetManager.getTexture("webxr")!;
   webxrLogoTexture.colorSpace = SRGBColorSpace;

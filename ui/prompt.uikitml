@@ -75,7 +75,7 @@
   /* Bottoni rettangolari orizzontali, equamente distribuiti */
   .tile {
     flex: 1;
-    height: 8; /* più bassi e larghi, come nella seconda immagine */
+    height: 8;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -127,8 +127,8 @@
           <span class="tile-label">Esci</span>
         </button>
 
-        <button class="tile" id="skybox1-button">
-          <span class="tile-label">Skybox 1</span>
+        <button class="tile" id="skybox-button">
+          <span class="tile-label">Cambia sfondo</span>
         </button>
 
         <button class="tile" id="load-saved-button">

@@ -14,6 +14,8 @@ import {
   DistanceGrabbable,
   MovementMode,
   TwoHandsGrabbable,
+  LocomotionEnvironment,
+  EnvironmentType,
 } from "@iwsdk/core";
 
 import { XRInputManager } from '@iwsdk/xr-input';
@@ -22,6 +24,9 @@ export class PanelSystem extends createSystem({
   promptPanel: {
     required: [PanelUI, PanelDocument],
     where: [eq(PanelUI, "config", "/ui/prompt.json")],
+  },
+    environments: {
+    required: [LocomotionEnvironment],
   },
 }) {
   // memorizzo l’entità musicale per riutilizzarla
@@ -49,6 +54,7 @@ export class PanelSystem extends createSystem({
       const textPrompt = this.document.getElementById("text-area") as UIKit.Text;
       const musicButton = this.document.getElementById("audio-button") as UIKit.Text;
       const vrButton = this.document.getElementById("vr-ar-button") as UIKit.Text;
+      const skyboxButton = this.document.getElementById("skybox-button") as UIKit.Text;
 
       generaButton.addEventListener(
         "click",
@@ -62,6 +68,50 @@ export class PanelSystem extends createSystem({
 
       // --- Musica
       musicButton.addEventListener("click", this.playMusic);
+
+      let isActive = false;
+      // --- Skybox
+      skyboxButton.addEventListener("click", () => {
+        // --- 1) Disattiva e nasconde qualsiasi environment esistente (es. simpHouse)
+        for (const envEntity of this.queries.environments.entities) {
+          // Prova a rimuovere il ruolo di environment (se l'API supporta removeComponent)
+          try {
+            // @ts-ignore - alcune versioni espongono removeComponent sull'entità
+            envEntity.removeComponent?.(LocomotionEnvironment);
+          } catch {}
+
+          // Nasconde/stacca l'object3D dalla scena così "scompare"
+          const obj = envEntity.object3D;
+          if (obj) {
+            obj.visible = false;
+            obj.parent?.remove(obj);
+          }
+        }
+
+        if (!isActive) {
+          const gltf = AssetManager.getGLTF("environmentDesk");
+          const envMeshNew = gltf.scene.clone(true);
+          envMeshNew.rotation.set(0, Math.PI, 0);
+          envMeshNew.position.set(0, -0.1, 0);
+
+          this.world
+            .createTransformEntity(envMeshNew)
+            .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
+
+          isActive = true;
+        } else {
+          const gltf = AssetManager.getGLTF("simpHouse");
+          const envMeshNewNew = gltf.scene.clone(true);
+          envMeshNewNew.rotation.set(0, Math.PI, 0);
+          envMeshNewNew.position.set(0, -0.1, 0);
+
+          this.world
+            .createTransformEntity(envMeshNewNew)
+            .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
+
+          isActive = false;
+        }
+      });
 
       // --- VR/AR
       vrButton.addEventListener("click", this.vrButtonClick);

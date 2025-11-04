@@ -1,0 +1,1666 @@
+scene: docref:Main.scene
+entities:
+  com.meta.models.AssetFolder:
+    - components:
+        com.meta.components.AssetFolder:
+          assets:
+            - ref:image0
+            - ref:image1
+            - ref:image10
+            - ref:image11
+            - ref:image12
+            - ref:image13
+            - ref:image14
+            - ref:image15
+            - ref:image16
+            - ref:image17
+            - ref:image18
+            - ref:image19
+            - ref:image2
+            - ref:image20
+            - ref:image21
+            - ref:image22
+            - ref:image23
+            - ref:image24
+            - ref:image25
+            - ref:image26
+            - ref:image27
+            - ref:image28
+            - ref:image29
+            - ref:image3
+            - ref:image30
+            - ref:image31
+            - ref:image32
+            - ref:image33
+            - ref:image34
+            - ref:image35
+            - ref:image36
+            - ref:image37
+            - ref:image38
+            - ref:image4
+            - ref:image5
+            - ref:image6
+            - ref:image7
+            - ref:image8
+            - ref:image9
+            - ref:Abraham
+            - ref:Abstract
+            - ref:BartBaby
+            - ref:Boat
+            - ref:Carpet
+            - ref:Diningplant
+            - ref:Dresser
+            - ref:Family
+            - ref:FamilySimpsons
+            - ref:Fireplace
+            - ref:Flower_red
+            - ref:Grandfather
+            - ref:Homer
+            - ref:Kidswall
+            - ref:Krusty
+            - ref:KrustyFrame
+            - ref:KrustyRadon
+            - ref:Landscap
+            - ref:Maggie
+            - ref:Maggie2
+            - ref:MaggieDuct
+            - ref:Maggie_elfpo
+            - ref:Maggieelfwal
+            - ref:Marge
+            - ref:Masterbartli
+            - ref:Murphy
+            - ref:Piano
+            - ref:Powerplant
+            - ref:Rocket
+            - ref:Saxophone
+            - ref:Shelves
+            - ref:Table
+            - ref:Tool2
+            - ref:Toolrack
+            - ref:Vacationwall
+            - ref:YoungMarge
+            - ref:material
+            - ref:material_34
+            - ref:simpsons_palette
+            - ref:Interior_Abraham_01
+            - ref:Interior_Abstract_0
+            - ref:Interior_BartBaby_0
+            - ref:Interior_Boat_0
+            - ref:Interior_Carpet_0
+            - ref:Interior_Diningplant_0
+            - ref:Interior_Dresser_0
+            - ref:Interior_Elf_01
+            - ref:Interior_FamilySimpsons_01
+            - ref:Interior_Family_01
+            - ref:Interior_Fireplace_0
+            - ref:Interior_Flower_red_01
+            - ref:Interior_Grandfather_0
+            - ref:Interior_Homer_0
+            - ref:Interior_Kidswall_0
+            - ref:Interior_KrustyFrame_0
+            - ref:Interior_KrustyRadon_01
+            - ref:Interior_Krusty_0
+            - ref:Interior_Landscap_0
+            - ref:Interior_Maggie2_0
+            - ref:Interior_MaggieDuct_0
+            - ref:Interior_Maggie_0
+            - ref:Interior_Maggie_elfpo_01
+            - ref:Interior_Maggieelfwal_0
+            - ref:Interior_Man_0
+            - ref:Interior_Marge_01
+            - ref:Interior_Masterbartli_0
+            - ref:Interior_Murphy_0
+            - ref:Interior_Piano_01
+            - ref:Interior_Powerplant_0
+            - ref:Interior_Rocket_0
+            - ref:Interior_Saxophone_0
+            - ref:Interior_Shelves_0
+            - ref:Interior_Table_0
+            - ref:Interior_Tool2_0
+            - ref:Interior_Toolrack_01
+            - ref:Interior_Vacationwall_0
+            - ref:Interior_YoungMarge_0
+            - ref:Interior_simpsons_palette_02
+            - ref:Interior_simpsons_palette_03
+            - ref:Interior_simpsons_palette_01
+            - ref:Interior_simpsons_palette_0
+        com.meta.components.Name:
+          name: simpsons_family_house__full_interior
+  com.meta.models.AssetRoot:
+    - components:
+        com.meta.components.AssetMetadata:
+          {}
+        com.meta.components.AssetRoot:
+          defaultScene: ref:Scene
+          scenes:
+            - ref:Scene
+  com.meta.models.Geometry:
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry.bin
+          mode: Triangles
+      tag: Geometry
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry1.bin
+          mode: Triangles
+      tag: Geometry1
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry2.bin
+          mode: Triangles
+      tag: Geometry2
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry3.bin
+          mode: Triangles
+      tag: Geometry3
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry5.bin
+          mode: Triangles
+      tag: Geometry5
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry7.bin
+          mode: Triangles
+      tag: Geometry7
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry10.bin
+          mode: Triangles
+      tag: Geometry10
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry11.bin
+          mode: Triangles
+      tag: Geometry11
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry21.bin
+          mode: Triangles
+      tag: Geometry21
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry25.bin
+          mode: Triangles
+      tag: Geometry25
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry4.bin
+          mode: Triangles
+      tag: Geometry4
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry6.bin
+          mode: Triangles
+      tag: Geometry6
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry8.bin
+          mode: Triangles
+      tag: Geometry8
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry9.bin
+          mode: Triangles
+      tag: Geometry9
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry13.bin
+          mode: Triangles
+      tag: Geometry13
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry26.bin
+          mode: Triangles
+      tag: Geometry26
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry17.bin
+          mode: Triangles
+      tag: Geometry17
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry27.bin
+          mode: Triangles
+      tag: Geometry27
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry14.bin
+          mode: Triangles
+      tag: Geometry14
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry28.bin
+          mode: Triangles
+      tag: Geometry28
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry12.bin
+          mode: Triangles
+      tag: Geometry12
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry29.bin
+          mode: Triangles
+      tag: Geometry29
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry16.bin
+          mode: Triangles
+      tag: Geometry16
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry30.bin
+          mode: Triangles
+      tag: Geometry30
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry22.bin
+          mode: Triangles
+      tag: Geometry22
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry31.bin
+          mode: Triangles
+      tag: Geometry31
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry18.bin
+          mode: Triangles
+      tag: Geometry18
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry15.bin
+          mode: Triangles
+      tag: Geometry15
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry32.bin
+          mode: Triangles
+      tag: Geometry32
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry20.bin
+          mode: Triangles
+      tag: Geometry20
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry33.bin
+          mode: Triangles
+      tag: Geometry33
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry34.bin
+          mode: Triangles
+      tag: Geometry34
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry35.bin
+          mode: Triangles
+      tag: Geometry35
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry36.bin
+          mode: Triangles
+      tag: Geometry36
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry37.bin
+          mode: Triangles
+      tag: Geometry37
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry19.bin
+          mode: Triangles
+      tag: Geometry19
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry38.bin
+          mode: Triangles
+      tag: Geometry38
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry39.bin
+          mode: Triangles
+      tag: Geometry39
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry40.bin
+          mode: Triangles
+      tag: Geometry40
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry24.bin
+          mode: Triangles
+      tag: Geometry24
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry41.bin
+          mode: Triangles
+      tag: Geometry41
+    - components:
+        com.meta.components.Geometry:
+          data: binary/Geometry23.bin
+          mode: Triangles
+      tag: Geometry23
+  com.meta.models.Image:
+    - components:
+        com.meta.components.Asset:
+          path: assets/image2.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image2
+      tag: image2
+    - components:
+        com.meta.components.Asset:
+          path: assets/image3.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image3
+      tag: image3
+    - components:
+        com.meta.components.Asset:
+          path: assets/image16.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image16
+      tag: image16
+    - components:
+        com.meta.components.Asset:
+          path: assets/image0.png
+        com.meta.components.Image:
+          height: 64
+          mimeType: image/png
+          width: 64
+        com.meta.components.Name:
+          name: image0
+      tag: image0
+    - components:
+        com.meta.components.Asset:
+          path: assets/image6.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image6
+      tag: image6
+    - components:
+        com.meta.components.Asset:
+          path: assets/image1.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image1
+      tag: image1
+    - components:
+        com.meta.components.Asset:
+          path: assets/image5.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image5
+      tag: image5
+    - components:
+        com.meta.components.Asset:
+          path: assets/image18.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image18
+      tag: image18
+    - components:
+        com.meta.components.Asset:
+          path: assets/image4.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image4
+      tag: image4
+    - components:
+        com.meta.components.Asset:
+          path: assets/image7.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image7
+      tag: image7
+    - components:
+        com.meta.components.Asset:
+          path: assets/image8.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image8
+      tag: image8
+    - components:
+        com.meta.components.Asset:
+          path: assets/image9.png
+        com.meta.components.Image:
+          height: 256
+          mimeType: image/png
+          width: 256
+        com.meta.components.Name:
+          name: image9
+      tag: image9
+    - components:
+        com.meta.components.Asset:
+          path: assets/image10.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image10
+      tag: image10
+    - components:
+        com.meta.components.Asset:
+          path: assets/image11.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image11
+      tag: image11
+    - components:
+        com.meta.components.Asset:
+          path: assets/image34.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image34
+      tag: image34
+    - components:
+        com.meta.components.Asset:
+          path: assets/image12.png
+        com.meta.components.Image:
+          height: 256
+          mimeType: image/png
+          width: 256
+        com.meta.components.Name:
+          name: image12
+      tag: image12
+    - components:
+        com.meta.components.Asset:
+          path: assets/image13.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image13
+      tag: image13
+    - components:
+        com.meta.components.Asset:
+          path: assets/image14.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image14
+      tag: image14
+    - components:
+        com.meta.components.Asset:
+          path: assets/image15.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image15
+      tag: image15
+    - components:
+        com.meta.components.Asset:
+          path: assets/image31.png
+        com.meta.components.Image:
+          height: 64
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image31
+      tag: image31
+    - components:
+        com.meta.components.Asset:
+          path: assets/image32.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image32
+      tag: image32
+    - components:
+        com.meta.components.Asset:
+          path: assets/image30.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image30
+      tag: image30
+    - components:
+        com.meta.components.Asset:
+          path: assets/image17.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image17
+      tag: image17
+    - components:
+        com.meta.components.Asset:
+          path: assets/image37.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image37
+      tag: image37
+    - components:
+        com.meta.components.Asset:
+          path: assets/image19.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image19
+      tag: image19
+    - components:
+        com.meta.components.Asset:
+          path: assets/image36.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image36
+      tag: image36
+    - components:
+        com.meta.components.Asset:
+          path: assets/image20.png
+        com.meta.components.Image:
+          height: 256
+          mimeType: image/png
+          width: 256
+        com.meta.components.Name:
+          name: image20
+      tag: image20
+    - components:
+        com.meta.components.Asset:
+          path: assets/image27.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 256
+        com.meta.components.Name:
+          name: image27
+      tag: image27
+    - components:
+        com.meta.components.Asset:
+          path: assets/image21.png
+        com.meta.components.Image:
+          height: 64
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image21
+      tag: image21
+    - components:
+        com.meta.components.Asset:
+          path: assets/image22.png
+        com.meta.components.Image:
+          height: 256
+          mimeType: image/png
+          width: 256
+        com.meta.components.Name:
+          name: image22
+      tag: image22
+    - components:
+        com.meta.components.Asset:
+          path: assets/image33.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image33
+      tag: image33
+    - components:
+        com.meta.components.Asset:
+          path: assets/image23.png
+        com.meta.components.Image:
+          height: 256
+          mimeType: image/png
+          width: 256
+        com.meta.components.Name:
+          name: image23
+      tag: image23
+    - components:
+        com.meta.components.Asset:
+          path: assets/image24.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image24
+      tag: image24
+    - components:
+        com.meta.components.Asset:
+          path: assets/image29.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image29
+      tag: image29
+    - components:
+        com.meta.components.Asset:
+          path: assets/image25.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image25
+      tag: image25
+    - components:
+        com.meta.components.Asset:
+          path: assets/image26.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image26
+      tag: image26
+    - components:
+        com.meta.components.Asset:
+          path: assets/image28.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image28
+      tag: image28
+    - components:
+        com.meta.components.Asset:
+          path: assets/image35.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image35
+      tag: image35
+    - components:
+        com.meta.components.Asset:
+          path: assets/image38.png
+        com.meta.components.Image:
+          height: 128
+          mimeType: image/png
+          width: 128
+        com.meta.components.Name:
+          name: image38
+      tag: image38
+  com.meta.models.Material:
+    - uri: docref:materials/FamilySimpsons.metaspatialmaterial
+      tag: FamilySimpsons
+    - uri: docref:materials/KrustyFrame.metaspatialmaterial
+      tag: KrustyFrame
+    - uri: docref:materials/Shelves.metaspatialmaterial
+      tag: Shelves
+    - uri: docref:materials/Powerplant.metaspatialmaterial
+      tag: Powerplant
+    - uri: docref:materials/Carpet.metaspatialmaterial
+      tag: Carpet
+    - uri: docref:materials/Krusty.metaspatialmaterial
+      tag: Krusty
+    - uri: docref:materials/Grandfather.metaspatialmaterial
+      tag: Grandfather
+    - uri: docref:materials/Diningplant.metaspatialmaterial
+      tag: Diningplant
+    - uri: docref:materials/simpsons_palette.metaspatialmaterial
+      tag: simpsons_palette
+    - uri: docref:materials/Dresser.metaspatialmaterial
+      tag: Dresser
+    - uri: docref:materials/Flower_red.metaspatialmaterial
+      tag: Flower_red
+    - uri: docref:materials/BartBaby.metaspatialmaterial
+      tag: BartBaby
+    - uri: docref:materials/YoungMarge.metaspatialmaterial
+      tag: YoungMarge
+    - uri: docref:materials/Kidswall.metaspatialmaterial
+      tag: Kidswall
+    - uri: docref:materials/Maggie2.metaspatialmaterial
+      tag: Maggie2
+    - uri: docref:materials/Murphy.metaspatialmaterial
+      tag: Murphy
+    - uri: docref:materials/Masterbartli.metaspatialmaterial
+      tag: Masterbartli
+    - uri: docref:materials/Abstract.metaspatialmaterial
+      tag: Abstract
+    - uri: docref:materials/Landscap.metaspatialmaterial
+      tag: Landscap
+    - uri: docref:materials/Rocket.metaspatialmaterial
+      tag: Rocket
+    - uri: docref:materials/material.metaspatialmaterial
+      tag: material
+    - uri: docref:materials/Saxophone.metaspatialmaterial
+      tag: Saxophone
+    - uri: docref:materials/KrustyRadon.metaspatialmaterial
+      tag: KrustyRadon
+    - uri: docref:materials/Maggie.metaspatialmaterial
+      tag: Maggie
+    - uri: docref:materials/MaggieDuct.metaspatialmaterial
+      tag: MaggieDuct
+    - uri: docref:materials/Table.metaspatialmaterial
+      tag: Table
+    - uri: docref:materials/Toolrack.metaspatialmaterial
+      tag: Toolrack
+    - uri: docref:materials/Homer.metaspatialmaterial
+      tag: Homer
+    - uri: docref:materials/Vacationwall.metaspatialmaterial
+      tag: Vacationwall
+    - uri: docref:materials/Marge.metaspatialmaterial
+      tag: Marge
+    - uri: docref:materials/Tool2.metaspatialmaterial
+      tag: Tool2
+    - uri: docref:materials/Maggieelfwal.metaspatialmaterial
+      tag: Maggieelfwal
+    - uri: docref:materials/Maggie_elfpo.metaspatialmaterial
+      tag: Maggie_elfpo
+    - uri: docref:materials/Boat.metaspatialmaterial
+      tag: Boat
+    - uri: docref:materials/Family.metaspatialmaterial
+      tag: Family
+    - uri: docref:materials/material_34.metaspatialmaterial
+      tag: material_34
+    - uri: docref:materials/Fireplace.metaspatialmaterial
+      tag: Fireplace
+    - uri: docref:materials/Abraham.metaspatialmaterial
+      tag: Abraham
+    - uri: docref:materials/Piano.metaspatialmaterial
+      tag: Piano
+  com.meta.models.Mesh:
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive6
+        com.meta.components.Name:
+          name: Interior_Maggie_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Maggie_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive23
+        com.meta.components.Name:
+          name: Interior_Carpet_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Carpet_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive4
+        com.meta.components.Name:
+          name: Interior_simpsons_palette_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_simpsons_palette_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive24
+        com.meta.components.Name:
+          name: Interior_Abstract_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Abstract_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive26
+        com.meta.components.Name:
+          name: Interior_simpsons_palette_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_simpsons_palette_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive27
+        com.meta.components.Name:
+          name: Interior_Fireplace_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Fireplace_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive3
+        com.meta.components.Name:
+          name: Interior_Abraham_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Abraham_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive17
+        com.meta.components.Name:
+          name: Interior_Shelves_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Shelves_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive28
+        com.meta.components.Name:
+          name: Interior_FamilySimpsons_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_FamilySimpsons_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive8
+        com.meta.components.Name:
+          name: Interior_KrustyFrame_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_KrustyFrame_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive12
+        com.meta.components.Name:
+          name: Interior_Vacationwall_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Vacationwall_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive29
+        com.meta.components.Name:
+          name: Interior_Rocket_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Rocket_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive30
+        com.meta.components.Name:
+          name: Interior_Masterbartli_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Masterbartli_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive5
+        com.meta.components.Name:
+          name: Interior_Powerplant_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Powerplant_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive31
+        com.meta.components.Name:
+          name: Interior_Maggie2_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Maggie2_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive10
+        com.meta.components.Name:
+          name: Interior_simpsons_palette_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_simpsons_palette_02
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive13
+        com.meta.components.Name:
+          name: Interior_Man_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Man_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive32
+        com.meta.components.Name:
+          name: Interior_Saxophone_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Saxophone_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive25
+        com.meta.components.Name:
+          name: Interior_Elf_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Elf_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive33
+        com.meta.components.Name:
+          name: Interior_simpsons_palette_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_simpsons_palette_03
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive7
+        com.meta.components.Name:
+          name: Interior_Flower_red_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Flower_red_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive22
+        com.meta.components.Name:
+          name: Interior_Diningplant_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Diningplant_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive16
+        com.meta.components.Name:
+          name: Interior_BartBaby_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_BartBaby_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive21
+        com.meta.components.Name:
+          name: Interior_YoungMarge_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_YoungMarge_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive34
+        com.meta.components.Name:
+          name: Interior_Maggie_elfpo_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Maggie_elfpo_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive14
+        com.meta.components.Name:
+          name: Interior_Kidswall_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Kidswall_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive35
+        com.meta.components.Name:
+          name: Interior_Landscap_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Landscap_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive11
+        com.meta.components.Name:
+          name: Interior_Grandfather_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Grandfather_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive36
+        com.meta.components.Name:
+          name: Interior_Krusty_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Krusty_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive2
+        com.meta.components.Name:
+          name: Interior_Dresser_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Dresser_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive37
+        com.meta.components.Name:
+          name: Interior_Murphy_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Murphy_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive9
+        com.meta.components.Name:
+          name: Interior_KrustyRadon_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_KrustyRadon_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive18
+        com.meta.components.Name:
+          name: Interior_MaggieDuct_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_MaggieDuct_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive
+        com.meta.components.Name:
+          name: Interior_Toolrack_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Toolrack_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive38
+        com.meta.components.Name:
+          name: Interior_Homer_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Homer_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive15
+        com.meta.components.Name:
+          name: Interior_Tool2_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Tool2_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive39
+        com.meta.components.Name:
+          name: Interior_Marge_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Marge_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive20
+        com.meta.components.Name:
+          name: Interior_Table_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Table_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive1
+        com.meta.components.Name:
+          name: Interior_Maggieelfwal_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Maggieelfwal_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive40
+        com.meta.components.Name:
+          name: Interior_Boat_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Boat_0
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive19
+        com.meta.components.Name:
+          name: Interior_Family_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Family_01
+    - components:
+        com.meta.components.Mesh:
+          morphTargetNames:
+            []
+          morphTargetWeights:
+            []
+          primitives:
+            - ref:Primitive41
+        com.meta.components.Name:
+          name: Interior_Piano_0
+        com.meta.components.PointerNodeInverseComponent:
+          {}
+      tag: Interior_Piano_01
+  com.meta.models.Primitive:
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry25
+          material: ref:Powerplant
+      tag: Primitive5
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry9
+          material: ref:Maggie
+      tag: Primitive6
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry18
+          material: ref:Flower_red
+      tag: Primitive7
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry19
+          material: ref:KrustyRadon
+      tag: Primitive9
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry12
+          material: ref:Vacationwall
+      tag: Primitive12
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry30
+          material: ref:material_34
+      tag: Primitive13
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry
+          material: ref:Shelves
+      tag: Primitive17
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry4
+          material: ref:MaggieDuct
+      tag: Primitive18
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry5
+          material: ref:Table
+      tag: Primitive20
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry20
+          material: ref:YoungMarge
+      tag: Primitive21
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry15
+          material: ref:Diningplant
+      tag: Primitive22
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry13
+          material: ref:Carpet
+      tag: Primitive23
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry26
+          material: ref:Abstract
+      tag: Primitive24
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry6
+          material: ref:simpsons_palette
+      tag: Primitive4
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry22
+          material: ref:material
+      tag: Primitive25
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry17
+          material: ref:simpsons_palette
+      tag: Primitive26
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry27
+          material: ref:Fireplace
+      tag: Primitive27
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry14
+          material: ref:Abraham
+      tag: Primitive3
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry10
+          material: ref:FamilySimpsons
+      tag: Primitive28
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry28
+          material: ref:KrustyFrame
+      tag: Primitive8
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry2
+          material: ref:Rocket
+      tag: Primitive29
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry29
+          material: ref:Masterbartli
+      tag: Primitive30
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry8
+          material: ref:Maggie2
+      tag: Primitive31
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry16
+          material: ref:simpsons_palette
+      tag: Primitive10
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry7
+          material: ref:Saxophone
+      tag: Primitive32
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry31
+          material: ref:simpsons_palette
+      tag: Primitive33
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry32
+          material: ref:BartBaby
+      tag: Primitive16
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry33
+          material: ref:Maggie_elfpo
+      tag: Primitive34
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry3
+          material: ref:Kidswall
+      tag: Primitive14
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry34
+          material: ref:Landscap
+      tag: Primitive35
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry21
+          material: ref:Grandfather
+      tag: Primitive11
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry35
+          material: ref:Krusty
+      tag: Primitive36
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry36
+          material: ref:Dresser
+      tag: Primitive2
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry37
+          material: ref:Murphy
+      tag: Primitive37
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry38
+          material: ref:Toolrack
+      tag: Primitive
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry39
+          material: ref:Homer
+      tag: Primitive38
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry11
+          material: ref:Tool2
+      tag: Primitive15
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry40
+          material: ref:Marge
+      tag: Primitive39
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry24
+          material: ref:Maggieelfwal
+      tag: Primitive1
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry41
+          material: ref:Boat
+      tag: Primitive40
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry1
+          material: ref:Family
+      tag: Primitive19
+    - components:
+        com.meta.components.Primitive:
+          geometry: ref:Geometry23
+          material: ref:Piano
+      tag: Primitive41
+  com.meta.models.Sampler:
+    - components:
+        com.meta.components.Name:
+          name: sampler39
+        com.meta.components.Sampler:
+          magFilter: Linear
+          minFilter: LinearMipmapLinear
+          wrapS: Repeat
+          wrapT: Repeat
+      tag: sampler39
+  com.meta.models.Texture:
+    - uri: docref:textures/texture51.metaspatialtexture
+      tag: texture51
+    - uri: docref:textures/texture53.metaspatialtexture
+      tag: texture53
+    - uri: docref:textures/texture73.metaspatialtexture
+      tag: texture73
+    - uri: docref:textures/texture76.metaspatialtexture
+      tag: texture76
+    - uri: docref:textures/texture61.metaspatialtexture
+      tag: texture61
+    - uri: docref:textures/texture70.metaspatialtexture
+      tag: texture70
+    - uri: docref:textures/texture63.metaspatialtexture
+      tag: texture63
+    - uri: docref:textures/texture62.metaspatialtexture
+      tag: texture62
+    - uri: docref:textures/texture59.metaspatialtexture
+      tag: texture59
+    - uri: docref:textures/texture77.metaspatialtexture
+      tag: texture77
+    - uri: docref:textures/texture58.metaspatialtexture
+      tag: texture58
+    - uri: docref:textures/texture60.metaspatialtexture
+      tag: texture60
+    - uri: docref:textures/texture52.metaspatialtexture
+      tag: texture52
+    - uri: docref:textures/texture47.metaspatialtexture
+      tag: texture47
+    - uri: docref:textures/texture40.metaspatialtexture
+      tag: texture40
+    - uri: docref:textures/texture42.metaspatialtexture
+      tag: texture42
+    - uri: docref:textures/texture54.metaspatialtexture
+      tag: texture54
+    - uri: docref:textures/texture41.metaspatialtexture
+      tag: texture41
+    - uri: docref:textures/texture71.metaspatialtexture
+      tag: texture71
+    - uri: docref:textures/texture43.metaspatialtexture
+      tag: texture43
+    - uri: docref:textures/texture44.metaspatialtexture
+      tag: texture44
+    - uri: docref:textures/texture45.metaspatialtexture
+      tag: texture45
+    - uri: docref:textures/texture57.metaspatialtexture
+      tag: texture57
+    - uri: docref:textures/texture56.metaspatialtexture
+      tag: texture56
+    - uri: docref:textures/texture46.metaspatialtexture
+      tag: texture46
+    - uri: docref:textures/texture48.metaspatialtexture
+      tag: texture48
+    - uri: docref:textures/texture49.metaspatialtexture
+      tag: texture49
+    - uri: docref:textures/texture50.metaspatialtexture
+      tag: texture50
+    - uri: docref:textures/texture55.metaspatialtexture
+      tag: texture55
+    - uri: docref:textures/texture67.metaspatialtexture
+      tag: texture67
+    - uri: docref:textures/texture64.metaspatialtexture
+      tag: texture64
+    - uri: docref:textures/texture65.metaspatialtexture
+      tag: texture65
+    - uri: docref:textures/texture66.metaspatialtexture
+      tag: texture66
+    - uri: docref:textures/texture68.metaspatialtexture
+      tag: texture68
+    - uri: docref:textures/texture69.metaspatialtexture
+      tag: texture69
+    - uri: docref:textures/texture72.metaspatialtexture
+      tag: texture72
+    - uri: docref:textures/texture74.metaspatialtexture
+      tag: texture74
+    - uri: docref:textures/texture75.metaspatialtexture
+      tag: texture75
+    - uri: docref:textures/texture78.metaspatialtexture
+      tag: texture78
+metadata:
+  version: 1.34

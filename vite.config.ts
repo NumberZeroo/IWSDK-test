@@ -37,7 +37,7 @@ export default defineConfig({
     proxy: {
       // tutte le chiamate a /api/* verranno inoltrate a Flask
       "/api": {
-        target: "http://172.19.186.119:5000", // indirizzo del server Flask da modificare se necessario
+        target: "http://127.0.0.1:5000", // indirizzo del server Flask da modificare se necessario
         changeOrigin: true,
         // rimuove il prefisso /api prima di inoltrare
         rewrite: (path) => path.replace(/^\/api/, ""),

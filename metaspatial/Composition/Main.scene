@@ -8,40 +8,8 @@ entities:
             - ref:promptPanel
             - ref:plantSansevieria
             - ref:robot
-            - ref:Environment
       tag: Scene
   com.meta.models.SceneNode:
-    - components:
-        com.iwsdk.components.LocomotionEnvironment:
-          {}
-        com.meta.components.Animatable:
-          {}
-        com.meta.components.DocumentReference:
-          transformType: None
-          documentReference: projref:environmentDesk/Main.metaspatialobj
-        com.meta.components.Name:
-          name: Environment
-        com.meta.components.PointerNodeInverseComponent:
-          {}
-        com.meta.components.SceneNode:
-          rotation.data:
-            - 0
-            - 3.14159274
-            - 0
-            - 0
-          rotation.format: Euler
-          scale:
-            - 1
-            - 1
-            - 1
-          translation:
-            - 0
-            - -0.106921583
-            - 0
-          componentVersion: 1
-        com.meta.components.Visibility:
-          visible: true
-      tag: Environment
     - components:
         com.iwsdk.components.AudioSource:
           maxInstances: 3
