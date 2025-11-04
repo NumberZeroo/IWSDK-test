@@ -1,26 +1,26 @@
 <style>
   .outer-panel {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     padding: 2;
     width: 100;
     background-color: #09090b;
     border-color: #27272a;
     border-width: 0.15;
     border-radius: 3;
-    gap: 2;
+    gap: 2.5;
   }
 
-  .panel-container {
-    align-items: flex-start;
-    padding: 2;
-    width: 50%;
+  .panel-card {
+    width: 100%;
     display: flex;
     flex-direction: column;
     background-color: #111218;
     border-color: #27272a;
     border-width: 0.15;
     border-radius: 3;
+    padding: 2;
+    gap: 2;
   }
 
   .heading {
@@ -30,13 +30,19 @@
     margin-bottom: 1;
   }
 
+  .row {
+    display: flex;
+    flex-direction: row;
+    gap: 2;
+    width: 100%;
+  }
+
   #text-area {
     width: 100%;
     height: 6;
     padding: 1;
-    margin-top: 2;
     background-color: #fafafa;
-    color: red;
+    color: #09090b;
     font-size: 2.5;
     font-weight: medium;
     text-align: left;
@@ -46,7 +52,6 @@
   .button {
     width: 100%;
     padding: 1.5;
-    margin-top: 2;
     background-color: #fafafa;
     color: #09090b;
     border-radius: 1.5;
@@ -57,24 +62,80 @@
     text-align: center;
     cursor: pointer;
   }
+
+  /* --- TOOLBAR --- */
+  .toolbar {
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    gap: 2;
+    justify-content: space-between;
+  }
+
+  /* Bottoni rettangolari orizzontali, equamente distribuiti */
+  .tile {
+    flex: 1;
+    height: 8; /* più bassi e larghi, come nella seconda immagine */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #111218;
+    border-color: #3f3f46;
+    border-width: 0.2;
+    border-radius: 1.5;
+    color: #fafafa;
+    font-size: 2.3;
+    font-weight: medium;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.1s ease-in-out;
+    padding-left: 5;
+    padding-right: 5;
+  }
+
+  .tile-label {
+    color: #fafafa;
+    font-size: 2.3;
+    font-weight: medium;
+    text-align: center;
+  }
 </style>
 
 <div class="main-container" id="pannello-prompt">
   <div class="outer-panel">
-    <div class="panel-container">
-      <span class="heading">Inserisci il tuo prompt:</span>
-      <input type="text" id="text-area" placeholder="Inserisci il tuo prompt qui…"/>
-      
-      <div style="width: 100%; display: flex; flex-direction: row; gap: 2;">
-        <button class="button" id="genera-button">Genera</button>
-        <button class="button" id="no-rigging-button">NoRigging</button>
-      </div>
-      </div>
+    
+    <!-- BLOCCO ALTO: MODELLO -->
+    <div class="panel-card">
+      <span class="heading">Modello</span>
 
-    <div class="panel-container">
-      <span class="heading">Comandi rapidi</span>
-      <button class="button" id="audio-button">Play Audio</button>
-      <button class="button" id="vr-ar-button">VR</button>
+      <input type="text" id="text-area" placeholder="Inserisci il tuo prompt qui..." />
+
+      <div class="row">
+        <button class="button" id="genera-button">Genera Rig</button>
+        <button class="button" id="no-rigging-button">Genera No Rig</button>
+      </div>
     </div>
+
+    <!-- BLOCCO IN BASSO: TOOLBAR -->
+    <div class="panel-card">
+      <div class="toolbar">
+        <button class="tile" id="audio-button">
+          <span class="tile-label">Audio</span>
+        </button>
+
+        <button class="tile" id="vr-ar-button">
+          <span class="tile-label">Esci</span>
+        </button>
+
+        <button class="tile" id="skybox1-button">
+          <span class="tile-label">Skybox 1</span>
+        </button>
+
+        <button class="tile" id="load-saved-button">
+          <span class="tile-label">Modelli salvati</span>
+        </button>
+      </div>
+    </div>
+
   </div>
 </div>
