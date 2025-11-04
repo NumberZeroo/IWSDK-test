@@ -23,11 +23,6 @@ const assets: AssetManifest = {
     type: AssetType.Audio,
     priority: "background",
   },
-  webxr: {
-    url: "/textures/webxr.png",
-    type: AssetType.Texture,
-    priority: "critical",
-  },
     simpHouse: {
     url: "/gltf/simp/scene.gltf",
     type: AssetType.GLTF,
@@ -74,19 +69,6 @@ World.create(document.getElementById("scene-container") as HTMLDivElement, {
   world
     .createTransformEntity(envMesh)
     .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
-
-  const webxrLogoTexture = AssetManager.getTexture("webxr")!;
-  webxrLogoTexture.colorSpace = SRGBColorSpace;
-  const logoBanner = new Mesh(
-    new PlaneGeometry(3.39, 0.96),
-    new MeshBasicMaterial({
-      map: webxrLogoTexture,
-      transparent: true,
-    }),
-  );
-  world.createTransformEntity(logoBanner);
-  logoBanner.position.set(0, 1, 1.8);
-  logoBanner.rotateY(Math.PI);
 
   const scene = world.scene;
       

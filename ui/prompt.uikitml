@@ -99,15 +99,21 @@
     font-weight: medium;
     text-align: center;
   }
+
+  .tile {
+    overflow: hidden;
+  }
+
+  .tile * {
+    pointer-events: none;
+  }
 </style>
 
-<div class="main-container" id="pannello-prompt">
+<div id="pannello-prompt">
   <div class="outer-panel">
     
     <!-- BLOCCO ALTO: MODELLO -->
     <div class="panel-card">
-      <span class="heading">Modello</span>
-
       <input type="text" id="text-area" placeholder="Inserisci il tuo prompt qui..." />
 
       <div class="row">
@@ -119,23 +125,11 @@
     <!-- BLOCCO IN BASSO: TOOLBAR -->
     <div class="panel-card">
       <div class="toolbar">
-        <button class="tile" id="audio-button">
-          <span class="tile-label">Audio</span>
-        </button>
-
-        <button class="tile" id="vr-ar-button">
-          <span class="tile-label">Esci</span>
-        </button>
-
-        <button class="tile" id="skybox-button">
-          <span class="tile-label">Cambia sfondo</span>
-        </button>
-
-        <button class="tile" id="load-saved-button">
-          <span class="tile-label">Modelli salvati</span>
-        </button>
+        <button class="tile" id="audio-button">Audio</button>
+        <button class="tile" id="vr-ar-button">Esci</button>
+        <button class="tile" id="skybox-button">Cambia sfondo</button>
+        <button class="tile" id="saved-models-button">Modelli salvati</button>
       </div>
     </div>
-
   </div>
 </div>
