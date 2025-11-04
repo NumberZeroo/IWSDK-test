@@ -92,9 +92,9 @@ export class PanelSystem extends createSystem({
 
       this.world.visibilityState.subscribe((visibilityState) => {
         if (visibilityState === VisibilityState.NonImmersive) {
-          vrButton.setProperties({ text: "VR" });
-        } else {
           vrButton.setProperties({ text: "AR" });
+        } else {
+          vrButton.setProperties({ text: "Esci" });
         }
       });
 
