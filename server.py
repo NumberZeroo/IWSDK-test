@@ -1,6 +1,7 @@
 from flask import Flask, send_file
 from flask_cors import CORS
 import os
+import time  # <--- importa il modulo time
 
 app = Flask(__name__)
 
@@ -21,6 +22,9 @@ def generate_glb():
     """
     Restituisce il file GLB dalla directory models
     """
+
+    time.sleep(20)
+    
     if not os.path.exists(MODEL_PATH):
         return {"error": "Il modello non esiste nella cartella models."}, 404
 

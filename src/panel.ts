@@ -181,6 +181,18 @@ export class PanelSystem extends createSystem({
 
     this.hidePromptPanel(document);
 
+    //modello provvisorio fino a che non funziona il server di generazione
+    const temp = this.placeLoadedModel("loading", { x: 0, y: 2, z: -1 });
+    setTimeout(() => {
+        temp
+          .addComponent(Interactable)
+          .addComponent(TwoHandsGrabbable, {
+            translate: true,
+            rotate: true,
+            scale: true,
+          });
+      }, 100);
+
     if (!prompt) {
       textPrompt.setProperties({ placeholder: "Inserisci un prompt valido." });
       console.warn("Nessun prompt inserito.");
@@ -190,6 +202,9 @@ export class PanelSystem extends createSystem({
     try {
       const blob = await this.postForModel("/api/generate", { prompt });
       await this.loadModelFromBlob(blob, "dynamicModel");
+
+      //Rimuovi il modello provvisorio
+      this.world.entityManager.getEntityByIndex(temp.index)?.destroy();
 
       const ent = this.placeLoadedModel("dynamicModel", { x: 0, y: 1, z: -1 });
       setTimeout(() => {

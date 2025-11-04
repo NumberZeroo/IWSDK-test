@@ -33,6 +33,10 @@ const assets: AssetManifest = {
     type: AssetType.GLTF,
     priority: "critical",
   },
+  loading: {
+    url: "/gltf/loading/scene.gltf",
+    type: AssetType.GLTF,
+  },
 };
 
 World.create(document.getElementById("scene-container") as HTMLDivElement, {

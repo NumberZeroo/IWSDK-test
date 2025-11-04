@@ -1,0 +1,11 @@
+Model Information:
+* title:	Loading animate
+* source:	https://sketchfab.com/3d-models/loading-animate-5d02b9b25e7f4e5bb11075a7d373048e
+* author:	yelaman.arts (https://sketchfab.com/elamanbolushan)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Loading animate" (https://sketchfab.com/3d-models/loading-animate-5d02b9b25e7f4e5bb11075a7d373048e) by yelaman.arts (https://sketchfab.com/elamanbolushan) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
