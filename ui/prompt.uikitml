@@ -116,6 +116,21 @@
     <div class="panel-card">
       <input type="text" id="text-area" placeholder="Inserisci il tuo prompt qui..." />
 
+      <div class="row" style="align-items:center; gap: 1.5; max-width: 60%; margin: 0 auto;">
+        <span class="tile-label">Vista:</span>
+
+        <button class="button" id="front-view-button" data-view="front" aria-pressed="false"
+        style="width:auto; padding-left:2; padding-right:2;">
+          Frontale
+        </button>
+
+        <button class="button" id="side-view-button" data-view="side" aria-pressed="false"
+                style="width:auto; padding-left:2; padding-right:2;">
+          Laterale
+        </button>
+
+      </div>
+
       <div class="row">
         <button class="button" id="genera-button">Genera Rig</button>
         <button class="button" id="no-rigging-button">Genera No Rig</button>

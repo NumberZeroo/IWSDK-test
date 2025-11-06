@@ -39,6 +39,9 @@ export class PanelSystem extends createSystem({
 
   private static readonly MUSIC_SRC = "/audio/lofi-chill.mp3";
 
+  // selected view for prompt
+  private selectedView: "front" | "side" | null = null;
+
   // gate anti “doppio click” - XR infame fa due click per qualche motivo
   private _lastClickAt = 0;
   private _consumeOnce(e: any): boolean {
@@ -69,6 +72,19 @@ export class PanelSystem extends createSystem({
       const musicButton = this.document.getElementById("audio-button") as UIKit.Text;
       const vrButton = this.document.getElementById("vr-ar-button") as UIKit.Text;
       const skyboxButton = this.document.getElementById("skybox-button") as UIKit.Text;
+      const frontBtn = this.document.getElementById("front-view-button") as UIKit.Text;
+      const sideBtn = this.document.getElementById("side-view-button") as UIKit.Text;
+
+      frontBtn.addEventListener("click", (e: any) => {
+        if (!this._consumeOnce(e)) return;
+        this.pickView("front", frontBtn, sideBtn);
+      });
+
+      sideBtn.addEventListener("click", (e: any) => {
+        if (!this._consumeOnce(e)) return;
+        this.pickView("side", frontBtn, sideBtn);
+      });
+
 
       generaButton.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
@@ -151,6 +167,52 @@ export class PanelSystem extends createSystem({
 
   update(dt: number, time: number) { this._tickXR(dt, time); }
 
+  /** Costruisce il prompt con la vista selezionata */
+  private buildPrompt(baseRaw: unknown): string {
+    const base = (baseRaw ?? "").toString().trim();
+    if (!base) return "";
+    if (this.selectedView === "front") return `front view ${base}`;
+    if (this.selectedView === "side")  return `side view ${base}`;
+    return base;  
+  }
+
+  /** Seleziona/deseleziona la vista e aggiorna i bottoni */
+  private pickView(
+    view: "front" | "side",
+    frontBtn: UIKit.Text,
+    sideBtn: UIKit.Text
+  ) {
+    // toggle: se clicchi la stessa, deseleziona
+    // Se clicchi di nuovo la stessa, reset
+    if (this.selectedView === view) {
+      this.selectedView = null;
+
+      frontBtn.setProperties({
+        text: "Frontale",
+        backgroundColor: "#fafafa",
+        color: "#09090b",
+      });
+
+      sideBtn.setProperties({
+        text: "Laterale",
+        backgroundColor: "#fafafa",
+        color: "#09090b",
+      });
+
+      return;
+    }
+
+    this.selectedView = view;
+
+    if (view === "front") {
+      frontBtn.setProperties({ backgroundColor: "#4ade80", color: "#09090b" });
+      sideBtn.setProperties({ backgroundColor: "#fafafa", color: "#09090b" });
+    } else {
+      sideBtn.setProperties({ backgroundColor: "#4ade80", color: "#09090b" });
+      frontBtn.setProperties({ backgroundColor: "#fafafa", color: "#09090b" });
+    }
+  }
+
   /** Gestione input XR */
   private _tickXR(dt: number, time: number) {
     if (!this.xrInput) return;
@@ -176,8 +238,9 @@ export class PanelSystem extends createSystem({
 
   /** Genera un modello 3D con rigging */
   private async handleGenerateWithRigging(document: UIKitDocument, textPrompt: UIKit.Text) {
-    const prompt = textPrompt?.currentSignal?.v;
+    const prompt = this.buildPrompt(textPrompt?.currentSignal?.v);
     console.log("Prompt inserito:", prompt);
+
 
     this.hidePromptPanel(document);
 
