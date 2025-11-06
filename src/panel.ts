@@ -41,6 +41,8 @@ export class PanelSystem extends createSystem({
 
   // selected view for prompt
   private selectedView: "front" | "side" | null = null;
+  private savedPage = 0;
+  private readonly pageSize = 4;
 
   // stato in memoria dei modelli salvati + storage locale
   private saved: Array<{ id: string; prompt: string; view: "front" | "side" | null; rig: boolean; ts: number }> = [];
@@ -101,7 +103,7 @@ export class PanelSystem extends createSystem({
 
       // bind esplicito ai bottoni degli 8 slot
       const slotButtons: UIKit.Text[] = [];
-      for (let i = 1; i <= 8; i++) {
+      for (let i = 1; i <= 4; i++) {
         const btn = this.document.getElementById(`saved-btn-${i}`) as UIKit.Text;
         if (btn) {
           slotButtons.push(btn);
@@ -211,9 +213,14 @@ export class PanelSystem extends createSystem({
       });
 
       // (stub per futura paginazione)
-      savedMore.addEventListener("click", (e: any) => {
+      savedMore.addEventListener("click", (e:any) => {
         if (!this._consumeOnce(e)) return;
-        this.renderSavedList(savedList, savedEmpty, { append: true });
+        const total = this.saved.length;
+        if (total === 0) return;
+
+        const totalPages = Math.ceil(total / this.pageSize);
+        this.savedPage = (this.savedPage + 1) % Math.max(totalPages, 1);
+        this.renderSavedList(savedList, savedEmpty, { reset: true });
       });
     });
   }
@@ -496,6 +503,7 @@ export class PanelSystem extends createSystem({
     savedList.setProperties({ visibility: "visible" });
     savedEmpty.setProperties({ visibility: "visible" });
 
+    this.savedPage = 0;
     this.renderSavedList(savedList, savedEmpty, { reset: true });
   }
 
@@ -510,7 +518,7 @@ export class PanelSystem extends createSystem({
     empty?.setProperties({ visibility: "hidden" });
     list?.setProperties({ visibility: "hidden" });
 
-    for (let i = 1; i <= 8; i++) {
+    for (let i = 1; i <= 4; i++) {
       const row = this.document?.getElementById(`saved-row-${i}`) as UIKit.Container;
       const label = this.document?.getElementById(`saved-label-${i}`) as UIKit.Text;
       const btn = this.document?.getElementById(`saved-btn-${i}`) as UIKit.Text;
@@ -526,43 +534,42 @@ export class PanelSystem extends createSystem({
     savedEmpty: UIKit.Text,
     opts: { reset?: boolean; append?: boolean } = {}
   ) {
-    const items = [...this.saved].sort((a, b) => b.ts - a.ts);
-    const hasItems = items.length > 0;
+    const itemsAll = [...this.saved].sort((a, b) => b.ts - a.ts);
+    const hasItems = itemsAll.length > 0;
     savedEmpty.setProperties({ visibility: hasItems ? "hidden" : "visible" });
 
-    // reset mappa
+    // paginazione
+    const start = this.savedPage * this.pageSize;
+    const pageItems = itemsAll.slice(start, start + this.pageSize);
+
+    // reset mappa slot
     this._slotModelIds.fill("");
 
-    // per i primi 8 elementi, riempi slot
-    for (let i = 0; i < 8; i++) {
-      const row = this.document!.getElementById(`saved-row-${i + 1}`) as UIKit.Container;
-      const label = this.document!.getElementById(`saved-label-${i + 1}`) as UIKit.Text;
+    // riempi gli 8 slot con gli item di pagina
+    for (let i = 0; i < this.pageSize; i++) {
+      const row   = this.document!.getElementById(`saved-row-${i+1}`)   as UIKit.Container;
+      const label = this.document!.getElementById(`saved-label-${i+1}`) as UIKit.Text;
+      const btn   = this.document!.getElementById(`saved-btn-${i+1}`)   as UIKit.Text;
 
-      const it = items[i];
-      if (!row || !label) continue;
+      const it = pageItems[i];
+      if (!row || !label || !btn) continue;
 
       if (!it) {
-        // nascondi slot non usati
         row.setProperties({ visibility: "hidden" });
-        label.setProperties({ text: "—" });
+        label.setProperties({ text: "—", visibility: "hidden" });
+        btn.setProperties({ visibility: "hidden" });
         this._slotModelIds[i] = "";
         continue;
       }
 
-      const tagView = it.view ? (it.view === "front" ? "Frontale" : "Laterale") : "—";
-      const tagRig = it.rig ? "Rig" : "No rig";
-      const shortId = it.id.slice(0, 8);
+      // solo prompt (come volevi)
       const p = it.prompt || "";
-      const shortPrompt = p.length > 36 ? (p.slice(0, 36) + "…") : p;
+      const shortPrompt = p.length > 48 ? (p.slice(0, 48) + "…") : p;
 
-      // testo su due righe
       label.setProperties({ text: shortPrompt, visibility: "visible" });
+      btn.setProperties({ visibility: "visible" });
       row.setProperties({ visibility: "visible" });
-      const btn = this.document!.getElementById(`saved-btn-${i + 1}`) as UIKit.Text;
-      btn?.setProperties?.({ visibility: "visible" });
 
-
-      row.setProperties({ visibility: "visible" });
       this._slotModelIds[i] = it.id;
     }
   }
@@ -579,7 +586,7 @@ export class PanelSystem extends createSystem({
     return res.blob();
   }
 
-  // handler click per uno slot (bottoni saved-btn-1..8)
+  // handler click per uno slot
   private async _onSavedSlotClick(slotIndex: number) {
     const modelId = this._slotModelIds?.[slotIndex];
     if (!modelId) {

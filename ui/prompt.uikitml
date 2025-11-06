@@ -223,35 +223,14 @@
             <div class="tile-label saved-label" id="saved-label-4">—</div>
             <button class="button saved-btn" id="saved-btn-4">Carica</button>
           </div>
-
-          <div class="saved-row" id="saved-row-5" style="visibility: hidden;">
-            <div class="tile-label saved-label" id="saved-label-5">—</div>
-            <button class="button saved-btn" id="saved-btn-5">Carica</button>
-          </div>
-
-          <div class="saved-row" id="saved-row-6" style="visibility: hidden;">
-            <div class="tile-label saved-label" id="saved-label-6">—</div>
-            <button class="button saved-btn" id="saved-btn-6">Carica</button>
-          </div>
-
-          <div class="saved-row" id="saved-row-7" style="visibility: hidden;">
-            <div class="tile-label saved-label" id="saved-label-7">—</div>
-            <button class="button saved-btn" id="saved-btn-7">Carica</button>
-          </div>
-
-          <div class="saved-row" id="saved-row-8" style="visibility: hidden;">
-            <div class="tile-label saved-label" id="saved-label-8">—</div>
-            <button class="button saved-btn" id="saved-btn-8">Carica</button>
-          </div>
-
         </div>
 
         <!-- AZIONI PANNELLO -->
         <div class="row" style="margin-top: 1;">
-          <button class="button" id="saved-close-button" style="width:auto; padding-left:2; padding-right:2;">
+          <button class="button" id="saved-close-button" style="width:auto; padding-left:2; padding-right:2; margin-top: 2;">
             Chiudi
           </button>
-          <button class="button" id="saved-load-more" style="width:auto; padding-left:2; padding-right:2;">
+          <button class="button" id="saved-load-more" style="width:auto; padding-left:2; padding-right:2; margin-top: 2;">
             Mostra altri
           </button>
         </div>
