@@ -1,14 +1,22 @@
-# IWSDK Starter Template
+# IWSDK-test
 
-This folder is a source template used by `scripts/generate-starters.cjs` to produce 8 runnable variants:
+A web interface project that works across different environments to let you: write a prompt, send it to the backend for generation of a model (with or without a skeleton), interact with the generated model, play background music, and reload previously generated models.
 
-- `starter-<vr|ar>-<manual|metaspatial>-<ts|js>`
+## Key Features
 
-Do not run this template directly. The generator will:
+- A web interface compatible with different environments (desktop, mobile, VR/AR)  
+- A panel which allows you to:  
+  - **enter a prompt**  
+  - **send** the prompt to the backend for model generation (with or without skeleton)  
+  - **interact/play** with the generated model  
+- Background music playback in the interface  
+- Ability to **reload** previously generated models for further interaction  
 
-- Copy a variant-specific `src/index.ts` (see `src/index-*.ts`).
-- Install the matching Vite config from `configs/`.
-- Keep only the required metaspatial folder (renamed to `metaspatial`).
-- Prune unused assets and dev dependencies.
+## Getting Started
 
-UI is defined in `ui/welcome.uikitml`; the Vite UIKitML plugin compiles it to `public/ui/welcome.json` during build in generated variants.
+1. Clone the repository  
+   ```bash
+   git clone https://github.com/NumberZeroo/IWSDK-test.git
+   cd IWSDK-test
+   npm install
+   nom run dev
