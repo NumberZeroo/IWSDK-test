@@ -1,42 +1,88 @@
-from flask import Flask, send_file
+from flask import Flask, send_file, jsonify, request, make_response
 from flask_cors import CORS
 import os
-import time  # <--- importa il modulo time
+import uuid
+import time
+import shutil
+from pathlib import Path
 
 app = Flask(__name__)
 
+# CORS: esponiamo anche gli header custom, così il front può leggere X-Model-Id
 CORS(
     app,
-    resources={r"/generate": {"origins": "*"}},
+    resources={r"/*": {"origins": "*"}},
     methods=["GET", "POST", "OPTIONS", "PUT", "DELETE"],
     allow_headers="*",
-    expose_headers="*"
+    expose_headers=["X-Model-Id"]
 )
 
+# --- Config "giocattolo" ---
+BASE_DIR   = Path(__file__).parent.resolve()
+MODEL_PATH = BASE_DIR / "models" / "super_mario_bros_coin.glb"  # il GLB finto
+TEMP_DIR   = BASE_DIR / "temp_assets"                           # dove "salviamo" i modelli
 
-# Percorso del modello nella directory 'models'
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "models", "super_mario_bros_coin.glb")
-
-@app.route("/generate", methods=["POST"])
+@app.route("/generate", methods=["POST", "OPTIONS"])
 def generate_glb():
+    """Simula la generazione:
+       - crea un nuovo uid
+       - copia il GLB sorgente in temp_assets/<uid>_out/0/mesh.glb
+       - risponde col file e con l'header X-Model-Id
     """
-    Restituisce il file GLB dalla directory models
-    """
+    if request.method == "OPTIONS":
+        return "", 204
 
-    time.sleep(20)
-    
-    if not os.path.exists(MODEL_PATH):
-        return {"error": "Il modello non esiste nella cartella models."}, 404
+    # Simula tempo di generazione
+    time.sleep(2)  # metti 20 se vuoi simulare più "lento"
 
-    return send_file(
-        MODEL_PATH,
+    if not MODEL_PATH.exists():
+        return jsonify({"error": "Il modello non esiste nella cartella models."}), 404
+
+    # 1) genera un id univoco
+    uid = uuid.uuid4().hex
+
+    # 2) prepara struttura cartelle tipo quella del backend reale
+    out_dir = TEMP_DIR / f"{uid}_out" / "0"
+    out_dir.mkdir(parents=True, exist_ok=True)
+
+    # 3) copia il modello finto nel path atteso
+    saved_glb = out_dir / "mesh.glb"
+    shutil.copyfile(MODEL_PATH, saved_glb)
+
+    # 4) invia il file e l'header X-Model-Id
+    resp = make_response(send_file(
+        saved_glb,
         mimetype="model/gltf-binary",
         as_attachment=True,
-        download_name="modello_a_caso.glb"
-    )
+        download_name="model.glb"
+    ))
+    resp.headers["X-Model-Id"] = uid
+    return resp
+
+
+@app.route("/models/<model_id>", methods=["GET"])
+def get_saved_model(model_id: str):
+    """Ritorna il modello salvato cercandolo in temp_assets/<id>_out/**/mesh*.glb"""
+    # Possibili nomi, per compatibilità con il backend "vero"
+    candidates = [
+        * (TEMP_DIR / f"{model_id}_out").glob("**/mesh.glb"),
+        * (TEMP_DIR / f"{model_id}_out").glob("**/mesh_rigged.glb"),
+        * (TEMP_DIR / f"{model_id}_out").glob("**/mesh_rigged*.glb"),
+    ]
+
+    if not candidates:
+        return jsonify({"error": "Modello non trovato"}), 404
+
+    path = candidates[0]
+    return send_file(path, mimetype="model/gltf-binary")
+
 
 if __name__ == "__main__":
-    app.run(
-        host="0.0.0.0",
-        port=5000,
-    )
+    # crea cartelle se mancano
+    (BASE_DIR / "models").mkdir(exist_ok=True)
+    TEMP_DIR.mkdir(exist_ok=True)
+
+    print(f"MODEL_PATH: {MODEL_PATH}")
+    print(f"TEMP_DIR  : {TEMP_DIR}")
+
+    app.run(host="0.0.0.0", port=5000, debug=False)

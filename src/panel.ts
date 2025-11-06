@@ -42,20 +42,19 @@ export class PanelSystem extends createSystem({
   // selected view for prompt
   private selectedView: "front" | "side" | null = null;
 
-  // === NEW: stato in memoria dei modelli salvati + storage locale
-  private saved: Array<{ id: string; prompt: string; view: "front"|"side"|null; rig: boolean; ts: number }> = [];
+  // stato in memoria dei modelli salvati + storage locale
+  private saved: Array<{ id: string; prompt: string; view: "front" | "side" | null; rig: boolean; ts: number }> = [];
   private _slotModelIds: string[] = new Array(8).fill("");
 
   private _saveToLS() {
-    try { localStorage.setItem("savedModels", JSON.stringify(this.saved)); } catch {}
+    try { localStorage.setItem("savedModels", JSON.stringify(this.saved)); } catch { }
   }
   private _loadFromLS() {
     try {
       const raw = localStorage.getItem("savedModels");
       if (raw) this.saved = JSON.parse(raw);
-    } catch {}
+    } catch { }
   }
-  // === /NEW
 
   // gate anti “doppio click” - XR infame fa due click per qualche motivo
   private _lastClickAt = 0;
@@ -73,9 +72,8 @@ export class PanelSystem extends createSystem({
     const camera = this.world.camera;
     this.xrInput = new XRInputManager({ scene, camera });
 
-    // === NEW: carica eventuali ID salvati in precedenza
+    // carica eventuali ID salvati in precedenza
     this._loadFromLS();
-    // === /NEW
 
     this.queries.promptPanel.subscribe("qualify", (entity) => {
       // se il pannello si ri-qualifica, non ri-aggiungere i listener
@@ -94,27 +92,25 @@ export class PanelSystem extends createSystem({
       const frontBtn = this.document.getElementById("front-view-button") as UIKit.Text;
       const sideBtn = this.document.getElementById("side-view-button") as UIKit.Text;
 
-      // === NEW: riferimenti al pannello "Modelli salvati"
       const savedPanel = this.document.getElementById("saved-panel") as UIKit.Container;
-      const savedList  = this.document.getElementById("saved-list")  as UIKit.Container;
+      const savedList = this.document.getElementById("saved-list") as UIKit.Container;
       const savedEmpty = this.document.getElementById("saved-empty") as UIKit.Text;
       const savedClose = this.document.getElementById("saved-close-button") as UIKit.Text;
-      const savedMore  = this.document.getElementById("saved-load-more") as UIKit.Text;
-      const savedBtn   = this.document.getElementById("saved-models-button") as UIKit.Text;
+      const savedMore = this.document.getElementById("saved-load-more") as UIKit.Text;
+      const savedBtn = this.document.getElementById("saved-models-button") as UIKit.Text;
 
-      // bind esplicito ai bottoni degli 8 slot (affidabile con UIKit)
+      // bind esplicito ai bottoni degli 8 slot
       const slotButtons: UIKit.Text[] = [];
       for (let i = 1; i <= 8; i++) {
         const btn = this.document.getElementById(`saved-btn-${i}`) as UIKit.Text;
         if (btn) {
           slotButtons.push(btn);
-          btn.addEventListener("click", async (e:any) => {
+          btn.addEventListener("click", async (e: any) => {
             if (!this._consumeOnce(e)) return;
             await this._onSavedSlotClick(i - 1); // indice 0..7
           });
         }
       }
-      // === /NEW
 
       frontBtn.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
@@ -160,9 +156,9 @@ export class PanelSystem extends createSystem({
         if (!this._consumeOnce(e)) return;
         console.log("Skybox button clicked");
 
-        // 1) rimuovi/nascondi environment esistenti
+        // rimuovi/nascondi environment esistenti
         for (const envEntity of this.queries.environments.entities) {
-          try { envEntity.removeComponent?.(LocomotionEnvironment); } catch {}
+          try { envEntity.removeComponent?.(LocomotionEnvironment); } catch { }
           const obj = envEntity.object3D;
           if (obj) { obj.visible = false; obj.parent?.remove(obj); }
         }
@@ -173,7 +169,7 @@ export class PanelSystem extends createSystem({
 
           // togli l’environment dal raycast della UI
           envMeshNew.traverse((o: any) => {
-            if (o?.isMesh) { o.raycast = () => {}; }
+            if (o?.isMesh) { o.raycast = () => { }; }
           });
 
           envMeshNew.rotation.set(0, Math.PI, 0);
@@ -189,7 +185,7 @@ export class PanelSystem extends createSystem({
           const envMeshNewNew = gltf.scene.clone(true);
 
           envMeshNewNew.traverse((o: any) => {
-            if (o?.isMesh) { o.raycast = () => {}; }
+            if (o?.isMesh) { o.raycast = () => { }; }
           });
 
           envMeshNewNew.rotation.set(0, Math.PI, 0);
@@ -203,25 +199,22 @@ export class PanelSystem extends createSystem({
         }
       });
 
-      // === NEW: handler pannello "Modelli salvati"
-      savedBtn.addEventListener("click", (e:any) => {
+      // handler pannello "Modelli salvati"
+      savedBtn.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
         this.openSavedPanel(savedPanel, savedList, savedEmpty);
       });
 
-      savedClose.addEventListener("click", (e:any) => {
+      savedClose.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
         this.closeSavedPanel(savedPanel);
       });
 
       // (stub per futura paginazione)
-      savedMore.addEventListener("click", (e:any) => {
+      savedMore.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
         this.renderSavedList(savedList, savedEmpty, { append: true });
       });
-
-      // (RIMOSSO il vecchio listener delegato su savedList per evitare problemi di bubbling in UIKit)
-      // === /NEW
     });
   }
 
@@ -232,7 +225,7 @@ export class PanelSystem extends createSystem({
     const base = (baseRaw ?? "").toString().trim();
     if (!base) return "";
     if (this.selectedView === "front") return `front view ${base}`;
-    if (this.selectedView === "side")  return `side view ${base}`;
+    if (this.selectedView === "side") return `side view ${base}`;
     return base;
   }
 
@@ -304,22 +297,22 @@ export class PanelSystem extends createSystem({
 
     // Chiudi il pannello "Modelli salvati" se era aperto
     const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
-      if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
-        this.closeSavedPanel(savedPanel);
+    if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
+      this.closeSavedPanel(savedPanel);
     }
 
 
     //modello provvisorio fino a che non funziona il server di generazione
     const temp = this.placeLoadedModel("loading", { x: 0, y: 2, z: -1 });
     setTimeout(() => {
-        temp
-          .addComponent(Interactable)
-          .addComponent(TwoHandsGrabbable, {
-            translate: true,
-            rotate: true,
-            scale: true,
-          });
-      }, 100);
+      temp
+        .addComponent(Interactable)
+        .addComponent(TwoHandsGrabbable, {
+          translate: true,
+          rotate: true,
+          scale: true,
+        });
+    }, 100);
 
     if (!prompt) {
       textPrompt.setProperties({ placeholder: "Inserisci un prompt valido." });
@@ -328,7 +321,6 @@ export class PanelSystem extends createSystem({
     }
 
     try {
-      // === CHANGED: passo anche rig/view; cattureremo l'X-Model-Id in postForModel
       const blob = await this.postForModel("/api/generate", { prompt, rig: true, view: this.selectedView });
       await this.loadModelFromBlob(blob, "dynamicModel");
 
@@ -352,7 +344,7 @@ export class PanelSystem extends createSystem({
 
   /** Genera un modello 3D senza rigging */
   private async handleGenerateNoRigging(document: UIKitDocument, textPrompt: UIKit.Text) {
-    // === CHANGED: coerente con front/side
+
     const prompt = this.buildPrompt(textPrompt?.currentSignal?.v);
     console.log("Prompt inserito:", prompt);
 
@@ -363,7 +355,6 @@ export class PanelSystem extends createSystem({
     }
 
     try {
-      // NB: lascia l’endpoint che usi ora; se il backend espone /generate3dOnly con header, metti quello.
       const blob = await this.postForModel("http://127.0.0.1:5000/generate-no-rigging", { prompt, rig: false, view: this.selectedView });
       await this.loadModelFromBlob(blob, "dynamicModel");
 
@@ -382,8 +373,8 @@ export class PanelSystem extends createSystem({
     }
   }
 
-  // === CHANGED: cattura X-Model-Id, salva entry, aggiorna lista se aperta
-  private async postForModel(url: string, body: { prompt: string; rig?: boolean; view?: "front"|"side"|null }): Promise<Blob> {
+  // cattura X-Model-Id, salva entry, aggiorna lista se aperta
+  private async postForModel(url: string, body: { prompt: string; rig?: boolean; view?: "front" | "side" | null }): Promise<Blob> {
     const res = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -411,7 +402,7 @@ export class PanelSystem extends createSystem({
       // se il pannello è aperto, aggiorna la lista
       const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
       if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
-        const list  = this.document!.getElementById("saved-list")  as UIKit.Container;
+        const list = this.document!.getElementById("saved-list") as UIKit.Container;
         const empty = this.document!.getElementById("saved-empty") as UIKit.Text;
         this.renderSavedList(list, empty, { reset: true });
       }
@@ -421,7 +412,6 @@ export class PanelSystem extends createSystem({
 
     return blob;
   }
-  // === /CHANGED
 
   private async loadModelFromBlob(blob: Blob, key: string): Promise<void> {
     const glbUrl = URL.createObjectURL(blob);
@@ -498,32 +488,32 @@ export class PanelSystem extends createSystem({
     }
   };
 
-  // === NEW: helper per aprire/chiudere pannello e renderizzare la lista
+  // helper per aprire/chiudere pannello e renderizzare la lista
   private openSavedPanel(savedPanel: UIKit.Container, savedList: UIKit.Container, savedEmpty: UIKit.Text) {
-  savedPanel.setProperties({ visibility: "visible" });
+    savedPanel.setProperties({ visibility: "visible" });
 
-  // ri-mostra i container base
-  savedList.setProperties({ visibility: "visible" });
-  savedEmpty.setProperties({ visibility: "visible" });
+    // ri-mostra i container base
+    savedList.setProperties({ visibility: "visible" });
+    savedEmpty.setProperties({ visibility: "visible" });
 
-  this.renderSavedList(savedList, savedEmpty, { reset: true });
-}
+    this.renderSavedList(savedList, savedEmpty, { reset: true });
+  }
 
   private closeSavedPanel(savedPanel: UIKit.Container) {
     // nascondi pannello
     savedPanel.setProperties({ visibility: "hidden" });
 
     // nascondi esplicitamente lista + empty + tutti gli 8 slot
-    const list  = this.document?.getElementById("saved-list")  as UIKit.Container;
+    const list = this.document?.getElementById("saved-list") as UIKit.Container;
     const empty = this.document?.getElementById("saved-empty") as UIKit.Text;
 
     empty?.setProperties({ visibility: "hidden" });
     list?.setProperties({ visibility: "hidden" });
 
     for (let i = 1; i <= 8; i++) {
-      const row   = this.document?.getElementById(`saved-row-${i}`)   as UIKit.Container;
+      const row = this.document?.getElementById(`saved-row-${i}`) as UIKit.Container;
       const label = this.document?.getElementById(`saved-label-${i}`) as UIKit.Text;
-      const btn   = this.document?.getElementById(`saved-btn-${i}`)   as UIKit.Text;
+      const btn = this.document?.getElementById(`saved-btn-${i}`) as UIKit.Text;
 
       row?.setProperties({ visibility: "hidden" });
       label?.setProperties({ visibility: "hidden" });
@@ -536,7 +526,7 @@ export class PanelSystem extends createSystem({
     savedEmpty: UIKit.Text,
     opts: { reset?: boolean; append?: boolean } = {}
   ) {
-    const items = [...this.saved].sort((a,b) => b.ts - a.ts);
+    const items = [...this.saved].sort((a, b) => b.ts - a.ts);
     const hasItems = items.length > 0;
     savedEmpty.setProperties({ visibility: hasItems ? "hidden" : "visible" });
 
@@ -545,8 +535,8 @@ export class PanelSystem extends createSystem({
 
     // per i primi 8 elementi, riempi slot
     for (let i = 0; i < 8; i++) {
-      const row   = this.document!.getElementById(`saved-row-${i+1}`)   as UIKit.Container;
-      const label = this.document!.getElementById(`saved-label-${i+1}`) as UIKit.Text;
+      const row = this.document!.getElementById(`saved-row-${i + 1}`) as UIKit.Container;
+      const label = this.document!.getElementById(`saved-label-${i + 1}`) as UIKit.Text;
 
       const it = items[i];
       if (!row || !label) continue;
@@ -560,15 +550,15 @@ export class PanelSystem extends createSystem({
       }
 
       const tagView = it.view ? (it.view === "front" ? "Frontale" : "Laterale") : "—";
-      const tagRig  = it.rig ? "Rig" : "No rig";
+      const tagRig = it.rig ? "Rig" : "No rig";
       const shortId = it.id.slice(0, 8);
       const p = it.prompt || "";
-      const shortPrompt = p.length > 36 ? (p.slice(0,36) + "…") : p;
+      const shortPrompt = p.length > 36 ? (p.slice(0, 36) + "…") : p;
 
-      // testo su due righe (prompt + meta). Con UIKit.Text usiamo
+      // testo su due righe
       label.setProperties({ text: shortPrompt, visibility: "visible" });
       row.setProperties({ visibility: "visible" });
-      const btn = this.document!.getElementById(`saved-btn-${i+1}`) as UIKit.Text;
+      const btn = this.document!.getElementById(`saved-btn-${i + 1}`) as UIKit.Text;
       btn?.setProperties?.({ visibility: "visible" });
 
 
@@ -579,7 +569,7 @@ export class PanelSystem extends createSystem({
 
   // scarica un modello salvato dal backend per ID
   private async getSavedModelBlob(modelId: string): Promise<Blob> {
-    // === CHANGED: usa il proxy /api per coerenza con le altre chiamate (evita CORS)
+    
     const res = await fetch(`/api/models/${modelId}`, { method: "GET" });
     console.log("GET /api/models/", modelId, "→", res.status);
     if (!res.ok) {
@@ -588,9 +578,8 @@ export class PanelSystem extends createSystem({
     }
     return res.blob();
   }
-  // === /NEW
 
-  // === NEW: handler click per uno slot (bottoni saved-btn-1..8)
+  // handler click per uno slot (bottoni saved-btn-1..8)
   private async _onSavedSlotClick(slotIndex: number) {
     const modelId = this._slotModelIds?.[slotIndex];
     if (!modelId) {
@@ -603,7 +592,7 @@ export class PanelSystem extends createSystem({
       const blob = await this.getSavedModelBlob(modelId);
       const key = `savedModel-${modelId}`;
       await this.loadModelFromBlob(blob, key);
-      const ent = this.placeLoadedModel(key, {x: 0, y: 1, z: -1.2});
+      const ent = this.placeLoadedModel(key, { x: 0, y: 1, z: -1.2 });
       setTimeout(() => {
         ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, {
           translate: true, rotate: true, scale: true,
@@ -612,7 +601,7 @@ export class PanelSystem extends createSystem({
     } catch (err) {
       console.error("Errore nel recupero del modello:", err);
       const promptInput = this.document!.getElementById("text-area") as UIKit.Text;
-      promptInput?.setProperties?.({placeholder: "Errore nel recupero del modello salvato."});
+      promptInput?.setProperties?.({ placeholder: "Errore nel recupero del modello salvato." });
     }
   }
 }

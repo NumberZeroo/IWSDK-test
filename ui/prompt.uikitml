@@ -113,7 +113,6 @@
   flex-direction: column;
   gap: 2;
   max-height: 28;
-  overflow-y: auto;
   padding-top: 0.5;
 }
 
@@ -126,24 +125,17 @@
 
   border-width: 0.15;
   border-color: #3f3f46;
-  border-position: bottom;
 
-  padding-top: 1;
-  padding-bottom: 1;
-}
-
-.saved-row:hover {
-  background-color: #0f1015;
-  border-color: #52525b;
+  padding-left: 1;
+  padding-top: 3;
+  padding-bottom: 3;
 }
 
 .saved-label {
   text-align: left;
   flex: 1;
-  max-width: 80%;
+  max-width: 100%;
   overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
   padding-right: 1;
 }
 
@@ -212,49 +204,47 @@
 
         <!-- LISTA SCORRIBILE -->
         <div id="saved-list" class="saved-list">
+          <div class="saved-row" id="saved-row-1" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-1">—</div>
+            <button class="button saved-btn" id="saved-btn-1">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-1" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-1">—</div>
-    <button class="button saved-btn" id="saved-btn-1">Carica</button>
-  </div>
+          <div class="saved-row" id="saved-row-2" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-2">—</div>
+            <button class="button saved-btn" id="saved-btn-2">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-2" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-2">—</div>
-    <button class="button saved-btn" id="saved-btn-2">Carica</button>
-  </div>
+          <div class="saved-row" id="saved-row-3" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-3">—</div>
+            <button class="button saved-btn" id="saved-btn-3">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-3" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-3">—</div>
-    <button class="button saved-btn" id="saved-btn-3">Carica</button>
-  </div>
+          <div class="saved-row" id="saved-row-4" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-4">—</div>
+            <button class="button saved-btn" id="saved-btn-4">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-4" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-4">—</div>
-    <button class="button saved-btn" id="saved-btn-4">Carica</button>
-  </div>
+          <div class="saved-row" id="saved-row-5" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-5">—</div>
+            <button class="button saved-btn" id="saved-btn-5">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-5" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-5">—</div>
-    <button class="button saved-btn" id="saved-btn-5">Carica</button>
-  </div>
+          <div class="saved-row" id="saved-row-6" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-6">—</div>
+            <button class="button saved-btn" id="saved-btn-6">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-6" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-6">—</div>
-    <button class="button saved-btn" id="saved-btn-6">Carica</button>
-  </div>
+          <div class="saved-row" id="saved-row-7" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-7">—</div>
+            <button class="button saved-btn" id="saved-btn-7">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-7" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-7">—</div>
-    <button class="button saved-btn" id="saved-btn-7">Carica</button>
-  </div>
+          <div class="saved-row" id="saved-row-8" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="saved-label-8">—</div>
+            <button class="button saved-btn" id="saved-btn-8">Carica</button>
+          </div>
 
-  <div class="saved-row" id="saved-row-8" style="visibility: hidden;">
-    <div class="tile-label saved-label" id="saved-label-8">—</div>
-    <button class="button saved-btn" id="saved-btn-8">Carica</button>
-  </div>
-
-</div>
-
+        </div>
 
         <!-- AZIONI PANNELLO -->
         <div class="row" style="margin-top: 1;">
