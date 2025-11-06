@@ -107,43 +107,164 @@
   .tile * {
     pointer-events: none;
   }
+
+.saved-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2;
+  max-height: 28;
+  overflow-y: auto;
+  padding-top: 0.5;
+}
+
+.saved-row {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1;
+
+  border-width: 0.15;
+  border-color: #3f3f46;
+  border-position: bottom;
+
+  padding-top: 1;
+  padding-bottom: 1;
+}
+
+.saved-row:hover {
+  background-color: #0f1015;
+  border-color: #52525b;
+}
+
+.saved-label {
+  text-align: left;
+  flex: 1;
+  max-width: 80%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 1;
+}
+
+.saved-btn {
+  width: auto;
+  flex: 0 0 auto;
+  padding-left: 2;
+  padding-right: 2;
+  margin-left: 1;
+}
+
 </style>
 
 <div id="pannello-prompt">
-  <div class="outer-panel">
-    
-    <!-- BLOCCO ALTO: MODELLO -->
-    <div class="panel-card">
-      <input type="text" id="text-area" placeholder="Inserisci il tuo prompt qui..." />
+  <!-- WRAPPER A DUE COLONNE -->
+  <div class="row" style="align-items: flex-start; gap: 2;">
 
-      <div class="row" style="align-items:center; gap: 1.5; max-width: 60%; margin: 0 auto;">
-        <span class="tile-label">Vista:</span>
+    <!-- COLONNA SINISTRA: pannello principale -->
+    <div class="outer-panel" style="flex: 1 1 60%;">
+      <!-- BLOCCO ALTO: MODELLO -->
+      <div class="panel-card">
+        <input type="text" id="text-area" placeholder="Inserisci il tuo prompt qui..." />
 
-        <button class="button" id="front-view-button" data-view="front" aria-pressed="false"
-        style="width:auto; padding-left:2; padding-right:2;">
-          Frontale
-        </button>
+        <div class="row" style="align-items:center; gap: 1.5; max-width: 60%; margin: 0 auto;">
+          <span class="tile-label">Vista:</span>
 
-        <button class="button" id="side-view-button" data-view="side" aria-pressed="false"
-                style="width:auto; padding-left:2; padding-right:2;">
-          Laterale
-        </button>
+          <button class="button" id="front-view-button" data-view="front" aria-pressed="false"
+                  style="width:auto; padding-left:2; padding-right:2;">
+            Frontale
+          </button>
 
+          <button class="button" id="side-view-button" data-view="side" aria-pressed="false"
+                  style="width:auto; padding-left:2; padding-right:2;">
+            Laterale
+          </button>
+        </div>
+
+        <div class="row">
+          <button class="button" id="genera-button">Genera Rig</button>
+          <button class="button" id="no-rigging-button">Genera No Rig</button>
+        </div>
       </div>
 
-      <div class="row">
-        <button class="button" id="genera-button">Genera Rig</button>
-        <button class="button" id="no-rigging-button">Genera No Rig</button>
+      <!-- BLOCCO IN BASSO: TOOLBAR -->
+      <div class="panel-card">
+        <div class="toolbar">
+          <button class="tile" id="audio-button">Audio</button>
+          <button class="tile" id="vr-ar-button">Esci</button>
+          <button class="tile" id="skybox-button">Cambia sfondo</button>
+          <button class="tile" id="saved-models-button">Modelli salvati</button>
+        </div>
       </div>
     </div>
 
-    <!-- BLOCCO IN BASSO: TOOLBAR -->
-    <div class="panel-card">
-      <div class="toolbar">
-        <button class="tile" id="audio-button">Audio</button>
-        <button class="tile" id="vr-ar-button">Esci</button>
-        <button class="tile" id="skybox-button">Cambia sfondo</button>
-        <button class="tile" id="saved-models-button">Modelli salvati</button>
+    <!-- COLONNA DESTRA: pannello "Modelli salvati" (nascosto inizialmente) -->
+    <div class="outer-panel" id="saved-panel"
+        style="flex: 0 0 38%; max-width: 38%; visibility: hidden;">
+
+      <div class="panel-card">
+        <div class="heading">Modelli salvati</div>
+
+        <!-- EMPTY STATE -->
+        <div id="saved-empty" class="tile-label" style="opacity: 0.8; text-align: left;">
+          Nessun modello salvato, genera un modello per vederlo qui.
+        </div>
+
+        <!-- LISTA SCORRIBILE -->
+        <div id="saved-list" class="saved-list">
+
+  <div class="saved-row" id="saved-row-1" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-1">—</div>
+    <button class="button saved-btn" id="saved-btn-1">Carica</button>
+  </div>
+
+  <div class="saved-row" id="saved-row-2" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-2">—</div>
+    <button class="button saved-btn" id="saved-btn-2">Carica</button>
+  </div>
+
+  <div class="saved-row" id="saved-row-3" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-3">—</div>
+    <button class="button saved-btn" id="saved-btn-3">Carica</button>
+  </div>
+
+  <div class="saved-row" id="saved-row-4" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-4">—</div>
+    <button class="button saved-btn" id="saved-btn-4">Carica</button>
+  </div>
+
+  <div class="saved-row" id="saved-row-5" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-5">—</div>
+    <button class="button saved-btn" id="saved-btn-5">Carica</button>
+  </div>
+
+  <div class="saved-row" id="saved-row-6" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-6">—</div>
+    <button class="button saved-btn" id="saved-btn-6">Carica</button>
+  </div>
+
+  <div class="saved-row" id="saved-row-7" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-7">—</div>
+    <button class="button saved-btn" id="saved-btn-7">Carica</button>
+  </div>
+
+  <div class="saved-row" id="saved-row-8" style="visibility: hidden;">
+    <div class="tile-label saved-label" id="saved-label-8">—</div>
+    <button class="button saved-btn" id="saved-btn-8">Carica</button>
+  </div>
+
+</div>
+
+
+        <!-- AZIONI PANNELLO -->
+        <div class="row" style="margin-top: 1;">
+          <button class="button" id="saved-close-button" style="width:auto; padding-left:2; padding-right:2;">
+            Chiudi
+          </button>
+          <button class="button" id="saved-load-more" style="width:auto; padding-left:2; padding-right:2;">
+            Mostra altri
+          </button>
+        </div>
       </div>
     </div>
   </div>
