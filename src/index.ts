@@ -29,7 +29,7 @@ const assets: AssetManifest = {
     priority: "critical",
   },
     environmentDesk: {
-    url: "/gltf/environmentDesk/environmentDesk.gltf",
+    url: "/gltf/conference_room1/scene.gltf",
     type: AssetType.GLTF,
     priority: "critical",
   },

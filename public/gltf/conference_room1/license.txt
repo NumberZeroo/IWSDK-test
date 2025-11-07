@@ -1,0 +1,11 @@
+Model Information:
+* title:	Conference Room1
+* source:	https://sketchfab.com/3d-models/conference-room1-b69e2a5dd7de4d7a8e091768d54a63e6
+* author:	MozillaHubs (https://sketchfab.com/mozillareality)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "Conference Room1" (https://sketchfab.com/3d-models/conference-room1-b69e2a5dd7de4d7a8e091768d54a63e6) by MozillaHubs (https://sketchfab.com/mozillareality) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
