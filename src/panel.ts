@@ -39,6 +39,9 @@ export class PanelSystem extends createSystem({
 
   private static readonly MUSIC_SRC = "/audio/lofi-chill.mp3";
 
+  private static readonly AUDIO_EGG_SRC = "/audio/egg.mp3";
+  private musicEgg?: Entity;
+
   // selected view for prompt
   private selectedView: "front" | "side" | null = null;
   private savedPage = 0;
@@ -272,6 +275,8 @@ export class PanelSystem extends createSystem({
     }
   }
 
+  private a_touch = 0;
+
   /** Gestione input XR */
   private _tickXR(dt: number, time: number) {
     if (!this.xrInput) return;
@@ -292,6 +297,24 @@ export class PanelSystem extends createSystem({
       if (!panel) return;
       console.log("Toggle pannello prompt:", panel.properties.value.visibility);
       panel.setProperties({ visibility: panel.properties.value.visibility === "hidden" ? "visible" : "hidden" });
+    }
+
+    // Triple tap 'A' per easter-egg
+    if( rightPad.getButtonDown('a-button')) {
+      this.a_touch++;
+      if(this.a_touch == 3){
+        const musicEgg = AssetManager.getAudio("eggSound");
+        this.musicEgg = this.createEntity();
+        this.musicEgg.addComponent(AudioSource, {
+          src: PanelSystem.AUDIO_EGG_SRC,
+          loop: false,
+          positional: false,
+          volume: 0.30,
+          autoplay: false,
+      });
+        this.a_touch = 0;
+        AudioUtils.play(this.musicEgg, 0.2);
+      }
     }
   }
 

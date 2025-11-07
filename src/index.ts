@@ -23,6 +23,11 @@ const assets: AssetManifest = {
     type: AssetType.Audio,
     priority: "background",
   },
+  eggSound: {
+    url: "/audio/egg.mp3",
+    type: AssetType.Audio,
+    priority: "background",
+  },
     simpHouse: {
     url: "/gltf/simp/scene.gltf",
     type: AssetType.GLTF,
