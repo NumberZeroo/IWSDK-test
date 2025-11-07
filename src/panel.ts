@@ -351,9 +351,29 @@ export class PanelSystem extends createSystem({
 
   /** Genera un modello 3D senza rigging */
   private async handleGenerateNoRigging(document: UIKitDocument, textPrompt: UIKit.Text) {
-
     const prompt = this.buildPrompt(textPrompt?.currentSignal?.v);
     console.log("Prompt inserito:", prompt);
+
+    this.hidePromptPanel(document);
+
+    // Chiudi il pannello "Modelli salvati" se era aperto
+    const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
+    if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
+      this.closeSavedPanel(savedPanel);
+    }
+
+
+    //modello provvisorio fino a che non funziona il server di generazione
+    const temp = this.placeLoadedModel("loading", { x: 0, y: 2, z: -1 });
+    setTimeout(() => {
+      temp
+        .addComponent(Interactable)
+        .addComponent(TwoHandsGrabbable, {
+          translate: true,
+          rotate: true,
+          scale: true,
+        });
+    }, 100);
 
     if (!prompt) {
       textPrompt.setProperties({ placeholder: "Inserisci un prompt valido." });
@@ -362,17 +382,20 @@ export class PanelSystem extends createSystem({
     }
 
     try {
-      const blob = await this.postForModel("http://127.0.0.1:5000/generate-no-rigging", { prompt, rig: false, view: this.selectedView });
+      const blob = await this.postForModel("/api/generate3dOnly", { prompt, rig: true, view: this.selectedView });
       await this.loadModelFromBlob(blob, "dynamicModel");
 
-      this.hidePromptPanel(document);
+      //Rimuovi il modello provvisorio
+      this.world.entityManager.getEntityByIndex(temp.index)?.destroy();
 
-      const ent = this.placeLoadedModel("dynamicModel", { x: 0, y: 1, z: -2 });
+      const ent = this.placeLoadedModel("dynamicModel", { x: 0, y: 1, z: -1 });
       setTimeout(() => {
         ent
           .addComponent(Interactable)
-          .addComponent(DistanceGrabbable, {
-            movementMode: MovementMode.MoveFromTarget,
+          .addComponent(TwoHandsGrabbable, {
+            translate: true,
+            rotate: true,
+            scale: true,
           });
       }, 100);
     } catch (error) {
