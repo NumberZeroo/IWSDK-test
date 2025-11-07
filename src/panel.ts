@@ -469,6 +469,9 @@ export class PanelSystem extends createSystem({
 
     const { scene: dynamicMesh } = gltf;
     dynamicMesh.position.set(position.x, position.y, position.z);
+    
+    //Gira il modello di 180 gradi
+    dynamicMesh.rotation.y = Math.PI;
     const ent = this.world.createTransformEntity(dynamicMesh);
     return ent;
   }
