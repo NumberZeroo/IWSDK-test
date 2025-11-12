@@ -49,7 +49,13 @@ export class PanelSystem extends createSystem({
 
   // stato in memoria dei modelli salvati + storage locale
   private saved: Array<{ id: string; prompt: string; view: "front" | "side" | null; rig: boolean; ts: number }> = [];
-  private _slotModelIds: string[] = new Array(8).fill("");
+
+  // modelli caricati in scena: modelId -> array di Entity
+  private _entitiesByModelId = new Map<string, Entity[]>();
+
+  // gli id mostrati negli slot della pagina corrente (riempito in renderSavedList)
+  private _slotModelIds: string[] = new Array(this.pageSize).fill("");
+
 
   private _saveToLS() {
     try { localStorage.setItem("savedModels", JSON.stringify(this.saved)); } catch { }
@@ -216,7 +222,7 @@ export class PanelSystem extends createSystem({
       });
 
       // (stub per futura paginazione)
-      savedMore.addEventListener("click", (e:any) => {
+      savedMore.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
         const total = this.saved.length;
         if (total === 0) return;
@@ -297,12 +303,20 @@ export class PanelSystem extends createSystem({
       if (!panel) return;
       console.log("Toggle pannello prompt:", panel.properties.value.visibility);
       panel.setProperties({ visibility: panel.properties.value.visibility === "hidden" ? "visible" : "hidden" });
+
+      // Chiudi il pannello "Modelli salvati" se era aperto
+      if (panel.properties.value.visibility === "hidden") {
+        const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
+        if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
+          this.closeSavedPanel(savedPanel);
+        }
+      }
     }
 
     // Triple tap 'A' per easter-egg
-    if( rightPad.getButtonDown('a-button')) {
+    if (rightPad.getButtonDown('a-button')) {
       this.a_touch++;
-      if(this.a_touch == 3){
+      if (this.a_touch == 3) {
         const musicEgg = AssetManager.getAudio("eggSound");
         this.musicEgg = this.createEntity();
         this.musicEgg.addComponent(AudioSource, {
@@ -311,7 +325,7 @@ export class PanelSystem extends createSystem({
           positional: false,
           volume: 0.30,
           autoplay: false,
-      });
+        });
         this.a_touch = 0;
         AudioUtils.play(this.musicEgg, 0.2);
       }
@@ -492,7 +506,7 @@ export class PanelSystem extends createSystem({
 
     const { scene: dynamicMesh } = gltf;
     dynamicMesh.position.set(position.x, position.y, position.z);
-    
+
     //Gira il modello di 180 gradi
     dynamicMesh.rotation.y = Math.PI;
     const ent = this.world.createTransformEntity(dynamicMesh);
@@ -587,18 +601,16 @@ export class PanelSystem extends createSystem({
     const hasItems = itemsAll.length > 0;
     savedEmpty.setProperties({ visibility: hasItems ? "hidden" : "visible" });
 
-    // paginazione
     const start = this.savedPage * this.pageSize;
     const pageItems = itemsAll.slice(start, start + this.pageSize);
 
-    // reset mappa slot
-    this._slotModelIds.fill("");
+    // reimposta gli id degli slot per la pagina corrente
+    this._slotModelIds = new Array(this.pageSize).fill("");
 
-    // riempi gli 8 slot con gli item di pagina
     for (let i = 0; i < this.pageSize; i++) {
-      const row   = this.document!.getElementById(`saved-row-${i+1}`)   as UIKit.Container;
-      const label = this.document!.getElementById(`saved-label-${i+1}`) as UIKit.Text;
-      const btn   = this.document!.getElementById(`saved-btn-${i+1}`)   as UIKit.Text;
+      const row = this.document!.getElementById(`saved-row-${i + 1}`) as UIKit.Container;
+      const label = this.document!.getElementById(`saved-label-${i + 1}`) as UIKit.Text;
+      const btn = this.document!.getElementById(`saved-btn-${i + 1}`) as UIKit.Text;
 
       const it = pageItems[i];
       if (!row || !label || !btn) continue;
@@ -607,25 +619,24 @@ export class PanelSystem extends createSystem({
         row.setProperties({ visibility: "hidden" });
         label.setProperties({ text: "—", visibility: "hidden" });
         btn.setProperties({ visibility: "hidden" });
-        this._slotModelIds[i] = "";
         continue;
       }
 
-      // solo prompt (come volevi)
-      const p = it.prompt || "";
-      const shortPrompt = p.length > 48 ? (p.slice(0, 48) + "…") : p;
+      const shortPrompt = it.prompt && it.prompt.length > 48 ? (it.prompt.slice(0, 48) + "…") : (it.prompt || "");
+      this._slotModelIds[i] = it.id;
 
       label.setProperties({ text: shortPrompt, visibility: "visible" });
-      btn.setProperties({ visibility: "visible" });
+      btn.setProperties({
+        visibility: "visible",
+        text: this._isModelLoaded(it.id) ? "Elimina" : "Carica",
+      });
       row.setProperties({ visibility: "visible" });
-
-      this._slotModelIds[i] = it.id;
     }
   }
 
   // scarica un modello salvato dal backend per ID
   private async getSavedModelBlob(modelId: string): Promise<Blob> {
-    
+
     const res = await fetch(`/api/models/${modelId}`, { method: "GET" });
     console.log("GET /api/models/", modelId, "→", res.status);
     if (!res.ok) {
@@ -635,7 +646,6 @@ export class PanelSystem extends createSystem({
     return res.blob();
   }
 
-  // handler click per uno slot
   private async _onSavedSlotClick(slotIndex: number) {
     const modelId = this._slotModelIds?.[slotIndex];
     if (!modelId) {
@@ -643,21 +653,55 @@ export class PanelSystem extends createSystem({
       return;
     }
 
+    const btn = this.document?.getElementById(`saved-btn-${slotIndex + 1}`) as UIKit.Text;
+    const isLoaded = this._isModelLoaded(modelId);
+
+    // --- ELIMINA ---
+    if (isLoaded || btn?.properties.value.text === "Elimina") {
+      this._unloadModel(modelId);
+      btn?.setProperties?.({ text: "Carica" });
+      console.log("Eliminato modello in scena:", modelId);
+      return;
+    }
+
+    // --- CARICA ---
     try {
       console.log("Carico modello salvato:", modelId);
       const blob = await this.getSavedModelBlob(modelId);
       const key = `savedModel-${modelId}`;
       await this.loadModelFromBlob(blob, key);
+
       const ent = this.placeLoadedModel(key, { x: 0, y: 1, z: -1.2 });
       setTimeout(() => {
         ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, {
           translate: true, rotate: true, scale: true,
         });
       }, 100);
+
+      this._markLoaded(modelId, ent);
+      btn?.setProperties?.({ text: "Elimina" });
     } catch (err) {
       console.error("Errore nel recupero del modello:", err);
       const promptInput = this.document!.getElementById("text-area") as UIKit.Text;
       promptInput?.setProperties?.({ placeholder: "Errore nel recupero del modello salvato." });
     }
+  }
+
+  private _isModelLoaded(modelId: string): boolean {
+    return (this._entitiesByModelId.get(modelId)?.length ?? 0) > 0;
+  }
+
+  private _markLoaded(modelId: string, ent: Entity) {
+    const arr = this._entitiesByModelId.get(modelId) ?? [];
+    arr.push(ent);
+    this._entitiesByModelId.set(modelId, arr);
+  }
+
+  private _unloadModel(modelId: string) {
+    const arr = this._entitiesByModelId.get(modelId) ?? [];
+    for (const e of arr) {
+      try { e.destroy?.(); } catch { }
+    }
+    this._entitiesByModelId.delete(modelId);
   }
 }
