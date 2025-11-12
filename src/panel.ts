@@ -667,6 +667,7 @@ export class PanelSystem extends createSystem({
     // --- CARICA ---
     try {
       console.log("Carico modello salvato:", modelId);
+      btn?.setProperties?.({ text: "Elimina" });
       const blob = await this.getSavedModelBlob(modelId);
       const key = `savedModel-${modelId}`;
       await this.loadModelFromBlob(blob, key);
@@ -679,7 +680,6 @@ export class PanelSystem extends createSystem({
       }, 100);
 
       this._markLoaded(modelId, ent);
-      btn?.setProperties?.({ text: "Elimina" });
     } catch (err) {
       console.error("Errore nel recupero del modello:", err);
       const promptInput = this.document!.getElementById("text-area") as UIKit.Text;
