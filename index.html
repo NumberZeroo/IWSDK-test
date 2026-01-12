@@ -9,6 +9,7 @@
     body {
       margin: 0;
       background: #f1f3f6;
+      background-image: url(logo2.png);
     }
 
     #btn-container {
@@ -49,6 +50,7 @@
     <div id="btn-container">
       <button onclick="startModule('/src/index.ts')">VR VERSION</button>
       <button onclick="startModule('/src/arVersion.ts')">AR VERSION</button>
+      <button onclick="window.location.href='/src/loadModels.html'">LOAD MODELS</button>
     </div>
 
     <div id="scene-container"></div>

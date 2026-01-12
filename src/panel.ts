@@ -219,7 +219,7 @@ export class PanelSystem extends createSystem({
     this.closeSecondary();
     try {
       const prompt = this.selectedView ? `${this.selectedView} view ${base}` : base;
-      const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt, rig: true }) });
+      const res = await fetch("/api/generate3dOnly", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt, rig: true }) });
       const id = res.headers.get("X-Model-Id");
       const blob = await res.blob();
       if (id) { this.saved.push({ id, prompt, ts: Date.now() }); localStorage.setItem("savedModels", JSON.stringify(this.saved)); }
