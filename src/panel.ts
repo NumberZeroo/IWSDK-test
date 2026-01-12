@@ -1,951 +1,262 @@
-import {
-  createSystem,
-  PanelUI,
-  PanelDocument,
-  eq,
-  VisibilityState,
-  UIKitDocument,
-  UIKit,
-  AssetManager,
-  AudioUtils,
-  AudioSource,
-  Entity,
-  Interactable,
-  DistanceGrabbable,
-  MovementMode,
-  TwoHandsGrabbable,
-  LocomotionEnvironment,
-  EnvironmentType,
-} from "@iwsdk/core";
-
+import { createSystem, PanelUI, PanelDocument, eq, VisibilityState, UIKitDocument, UIKit, AssetManager, Entity, Interactable, TwoHandsGrabbable, LocomotionEnvironment } from "@iwsdk/core";
 import { XRInputManager } from '@iwsdk/xr-input';
+import * as THREE from 'three';
 
 export class PanelSystem extends createSystem({
-  promptPanel: {
-    required: [PanelUI, PanelDocument],
-    where: [eq(PanelUI, "config", "/ui/prompt.json")],
-  },
-  environments: {
-    required: [LocomotionEnvironment],
-  },
+  promptPanel: { required: [PanelUI, PanelDocument], where: [eq(PanelUI, "config", "/ui/prompt.json")] },
+  environments: { required: [LocomotionEnvironment] },
 }) {
-  private musicEntity?: Entity;
   private document?: UIKitDocument;
-
-  // evita doppi binding degli handler
   private listenersBound = false;
-
   private xrInput?: XRInputManager;
-
-  private static readonly MUSIC_SRC = "/audio/lofi-chill.mp3";
-
-  private static readonly AUDIO_EGG_SRC = "/audio/egg.mp3";
-  private musicEgg?: Entity;
-
-  // selected view for prompt
   private selectedView: "front" | "side" | null = null;
-  private savedPage = 0;
+  private activeMode: "saved" | "preset" | "primitive" | null = null;
+
+  private saved: any[] = [];
+  private presets: any[] = [];
+  private readonly primitiveList = [
+    { id: "prim_cube", name: "Cube" },
+    { id: "prim_sphere", name: "Sphere" },
+    { id: "prim_cylinder", name: "Cylinder" },
+    { id: "prim_capsule", name: "Capsule" }
+  ];
+
+  private currentPage = 0;
   private readonly pageSize = 4;
+  private _entitiesById = new Map<string, Entity[]>();
+  private _slotIds: string[] = ["", "", "", ""];
 
-  // stato in memoria dei modelli salvati + storage locale
-  private saved: Array<{ id: string; prompt: string; view: "front" | "side" | null; rig: boolean; ts: number }> = [];
+  init() {
+    this.xrInput = new XRInputManager({ scene: this.world.scene, camera: this.world.camera });
+    this._loadFromLS();
 
-  // modelli caricati in scena: modelId -> array di Entity
-  private _entitiesByModelId = new Map<string, Entity[]>();
+    this.queries.promptPanel.subscribe("qualify", (entity) => {
+      if (this.listenersBound) return;
+      this.listenersBound = true;
+      this.document = PanelDocument.data.document[entity.index] as UIKitDocument;
 
-  // gli id mostrati negli slot della pagina corrente (riempito in renderSavedList)
-  private _slotModelIds: string[] = new Array(this.pageSize).fill("");
+      for (let i = 1; i <= 4; i++) {
+        const btn = this.document.getElementById(`btn-${i}`) as UIKit.Text;
+        btn?.addEventListener("click", async (e: any) => {
+          if (this._consumeOnce(e)) await this._onSlotClick(i - 1);
+        });
+      }
 
-  // PRESET MODELS
-  private presetPage = 0;
-  private readonly presetPageSize = 4;
-
-  // lista preset presa dal backend (id = filename o id backend)
-  private presets: Array<{ id: string; name?: string; prompt?: string; ts?: number }> = [];
-
-  // gli id mostrati negli slot preset della pagina corrente
-  private _slotPresetIds: string[] = new Array(this.presetPageSize).fill("");
-
-  // preset caricati in scena: presetId -> array di Entity
-  private _entitiesByPresetId = new Map<string, Entity[]>();
-
-
-  private _saveToLS() {
-    try { localStorage.setItem("savedModels", JSON.stringify(this.saved)); } catch { }
+      this.document.getElementById("front-view-button")?.addEventListener("click", (e: any) => { if (this._consumeOnce(e)) this.pickView("front"); });
+      this.document.getElementById("side-view-button")?.addEventListener("click", (e: any) => { if (this._consumeOnce(e)) this.pickView("side"); });
+      this.document.getElementById("no-rigging-button")?.addEventListener("click", (e: any) => { if (this._consumeOnce(e)) this.handleGenerateNoRigging(); });
+      
+      this.document.getElementById("saved-models-button")?.addEventListener("click", (e: any) => { if (this._consumeOnce(e)) this.openSecondary("saved"); });
+      this.document.getElementById("preset-models-button")?.addEventListener("click", (e: any) => { if (this._consumeOnce(e)) this.openSecondary("preset"); });
+      this.document.getElementById("primitive-button")?.addEventListener("click", (e: any) => { if (this._consumeOnce(e)) this.openSecondary("primitive"); });
+      
+      this.document.getElementById("secondary-close")?.addEventListener("click", (e: any) => { if (this._consumeOnce(e)) this.closeSecondary(); });
+      this.document.getElementById("secondary-more")?.addEventListener("click", (e: any) => {
+        if (this._consumeOnce(e)) {
+            const data = this.activeMode === "saved" ? this.saved : (this.activeMode === "preset" ? this.presets : this.primitiveList);
+            const totalPages = Math.ceil(data.length / this.pageSize);
+            if (totalPages > 0) {
+                this.currentPage = (this.currentPage + 1) % totalPages;
+                this.renderSecondary();
+            }
+        }
+      });
+      this.document.getElementById("vr-ar-button")?.addEventListener("click", (e: any) => {
+        if (this._consumeOnce(e)) this.world.visibilityState.value === VisibilityState.NonImmersive ? this.world.launchXR() : this.world.exitXR();
+      });
+    });
   }
+
   private _loadFromLS() {
-    try {
-      const raw = localStorage.getItem("savedModels");
-      if (raw) this.saved = JSON.parse(raw);
-    } catch { }
+    try { const raw = localStorage.getItem("savedModels"); if (raw) this.saved = JSON.parse(raw); } catch {}
   }
 
-  // gate anti “doppio click” - XR infame fa due click per qualche motivo
+  private closeSecondary() {
+    const panel = this.document?.getElementById("secondary-panel") as UIKit.Container;
+    panel?.setProperties({ visibility: "hidden" });
+    const empty = this.document?.getElementById("secondary-empty") as UIKit.Text;
+    empty?.setProperties({ visibility: "hidden" });
+
+    for (let i = 1; i <= 4; i++) {
+      this.document?.getElementById(`row-${i}`)?.setProperties({ visibility: "hidden" });
+      this.document?.getElementById(`label-${i}`)?.setProperties({ text: "?", visibility: "hidden" });
+      this.document?.getElementById(`btn-${i}`)?.setProperties({ text: "?", visibility: "hidden" });
+      this._slotIds[i-1] = "";
+    }
+    this.activeMode = null;
+  }
+
+  private async openSecondary(mode: "saved" | "preset" | "primitive") {
+    this.closeSecondary();
+    this.activeMode = mode;
+    this.currentPage = 0;
+    const panel = this.document?.getElementById("secondary-panel") as UIKit.Container;
+    panel?.setProperties({ visibility: "visible" });
+    
+    if (mode === "preset") {
+      try {
+        const res = await fetch("/api/presets");
+        const data = await res.json();
+        this.presets = Array.isArray(data) ? data : (data.items || []);
+      } catch { this.presets = []; }
+    }
+    this.renderSecondary();
+  }
+
+  private renderSecondary() {
+    const mode = this.activeMode;
+    let data: any[] = [];
+    if (mode === "saved") data = [...this.saved].sort((a,b) => b.ts - a.ts);
+    else if (mode === "preset") data = this.presets;
+    else if (mode === "primitive") data = this.primitiveList;
+    
+    const heading = this.document?.getElementById("secondary-heading") as UIKit.Text;
+    heading?.setProperties({ text: mode === "primitive" ? "Primitives" : (mode === "saved" ? "Saved Models" : "Preset Models") });
+
+    const empty = this.document?.getElementById("secondary-empty") as UIKit.Text;
+    const hasData = data && data.length > 0;
+    empty?.setProperties({ 
+        text: mode === "saved" ? "No saved models." : (mode === "primitive" ? "No primitives." : "No presets available."),
+        visibility: hasData ? "hidden" : "visible" 
+    });
+
+    const totalPages = Math.max(1, Math.ceil(data.length / this.pageSize));
+    const start = this.currentPage * this.pageSize;
+    const items = data.slice(start, start + this.pageSize);
+    this._slotIds = ["", "", "", ""];
+
+    for (let i = 0; i < 4; i++) {
+      const row = this.document?.getElementById(`row-${i+1}`) as UIKit.Container;
+      const lbl = this.document?.getElementById(`label-${i+1}`) as UIKit.Text;
+      const btn = this.document?.getElementById(`btn-${i+1}`) as UIKit.Text;
+      const it = items[i];
+
+      if (!it || !hasData) {
+        row?.setProperties({ visibility: "hidden" });
+        lbl?.setProperties({ text: "?", visibility: "hidden" });
+        btn?.setProperties({ visibility: "hidden" });
+        continue;
+      }
+      
+      this._slotIds[i] = it.id;
+      const title = it.name || it.prompt || it.id;
+      lbl?.setProperties({ text: title.length > 35 ? title.slice(0, 35) + "..." : title, visibility: "visible" });
+      btn?.setProperties({ text: this._isLoaded(it.id) ? "Delete" : "Load", visibility: "visible" });
+      row?.setProperties({ visibility: "visible" });
+    }
+  }
+
+  private async _onSlotClick(idx: number) {
+    const id = this._slotIds[idx];
+    if (!id) return;
+    const btn = this.document?.getElementById(`btn-${idx+1}`) as UIKit.Text;
+
+    if (this._isLoaded(id)) {
+      this._unloadModel(id);
+      btn?.setProperties({ text: "Load" });
+    } else {
+      if (this.activeMode === "primitive") {
+        this.createPrimitive(id);
+        btn?.setProperties({ text: "Delete" });
+      } else {
+        try {
+          btn?.setProperties({ text: "..." });
+          const url = this.activeMode === "saved" ? `/api/models/${id}` : `/api/presets/${encodeURIComponent(id)}`;
+          const res = await fetch(url);
+          const blob = await res.blob();
+          const key = `model-${id}`;
+          await AssetManager.loadGLTF(URL.createObjectURL(blob), key);
+          const ent = this.placeLoadedModel(key, { x: 0, y: 1, z: -1.2 });
+          ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, { translate: true, rotate: true, scale: true });
+          this._markLoaded(id, ent);
+          btn?.setProperties({ text: "Delete" });
+        } catch (e) { btn?.setProperties({ text: "Error" }); }
+      }
+    }
+  }
+
+  private createPrimitive(type: string) {
+    let mesh;
+    const material = new THREE.MeshStandardMaterial({ color: 0x4ade80 });
+    switch(type) {
+      case "prim_cube": mesh = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.5, 0.5), material); break;
+      case "prim_sphere": mesh = new THREE.Mesh(new THREE.SphereGeometry(0.3, 32, 32), material); break;
+      case "prim_cylinder": mesh = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.5, 32), material); break;
+      case "prim_capsule": mesh = new THREE.Mesh(new THREE.CapsuleGeometry(0.2, 0.4, 4, 16), material); break;
+    }
+    if (mesh) {
+      mesh.position.set(0, 1, -1.2);
+      const ent = this.world.createTransformEntity(mesh);
+      ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, { translate: true, rotate: true, scale: true });
+      this._markLoaded(type, ent);
+    }
+  }
+
+  private _isLoaded(id: string) { return (this._entitiesById.get(id)?.length ?? 0) > 0; }
+  private _markLoaded(id: string, ent: Entity) {
+    const arr = this._entitiesById.get(id) || [];
+    arr.push(ent);
+    this._entitiesById.set(id, arr);
+  }
+  private _unloadModel(id: string) {
+    this._entitiesById.get(id)?.forEach(e => { try { e.destroy(); } catch{} });
+    this._entitiesById.delete(id);
+  }
+
+  private pickView(view: "front" | "side") {
+    this.selectedView = this.selectedView === view ? null : view;
+    const f = this.document?.getElementById("front-view-button") as UIKit.Text;
+    const s = this.document?.getElementById("side-view-button") as UIKit.Text;
+    f?.setProperties({ backgroundColor: this.selectedView === "front" ? "#4ade80" : "#fafafa" });
+    s?.setProperties({ backgroundColor: this.selectedView === "side" ? "#4ade80" : "#fafafa" });
+  }
+
+  private async handleGenerateNoRigging() {
+    const input = this.document?.getElementById("text-area") as UIKit.Text;
+    const base = input?.currentSignal?.v || "";
+    if (!base) return;
+    this.document?.getElementById("pannello-prompt")?.setProperties({ visibility: "hidden" });
+    this.closeSecondary();
+    try {
+      const prompt = this.selectedView ? `${this.selectedView} view ${base}` : base;
+      const res = await fetch("/api/generate", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ prompt, rig: true }) });
+      const id = res.headers.get("X-Model-Id");
+      const blob = await res.blob();
+      if (id) { this.saved.push({ id, prompt, ts: Date.now() }); localStorage.setItem("savedModels", JSON.stringify(this.saved)); }
+      const key = "dynamicModel";
+      await AssetManager.loadGLTF(URL.createObjectURL(blob), key);
+      const ent = this.placeLoadedModel(key, { x: 0, y: 1, z: -1 });
+      ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, { translate: true, rotate: true, scale: true });
+    } catch (e) {}
+  }
+
+  private placeLoadedModel(key: string, pos: any): Entity {
+    const gltf = AssetManager.getGLTF(key);
+    if (!gltf) return this.world.createTransformEntity();
+    const mesh = gltf.scene.clone();
+    mesh.position.set(pos.x, pos.y, pos.z);
+    mesh.rotation.y = Math.PI;
+    return this.world.createTransformEntity(mesh);
+  }
+
   private _lastClickAt = 0;
-  private _consumeOnce(e: any): boolean {
-    e?.stopPropagation?.();
-    e?.preventDefault?.();
-    const now = (typeof performance !== "undefined" && performance.now) ? performance.now() : Date.now();
-    if (now - this._lastClickAt < 160) return false; // scarta il secondo evento gemello
+  private _consumeOnce(e: any) {
+    const now = Date.now();
+    if (now - this._lastClickAt < 200) return false;
     this._lastClickAt = now;
     return true;
   }
 
-  init() {
-    const scene = this.world.scene;
-    const camera = this.world.camera;
-    this.xrInput = new XRInputManager({ scene, camera });
-
-    // carica eventuali ID salvati in precedenza
-    this._loadFromLS();
-
-    this.queries.promptPanel.subscribe("qualify", (entity) => {
-      // se il pannello si ri-qualifica, non ri-aggiungere i listener
-      if (this.listenersBound) return;
-      this.listenersBound = true;
-
-      this.document = PanelDocument.data.document[entity.index] as UIKitDocument;
-      if (!this.document) return;
-
-      const generaButton = this.document.getElementById("genera-button") as UIKit.Text;
-      const noRiggingButton = this.document.getElementById("no-rigging-button") as UIKit.Text;
-      const textPrompt = this.document.getElementById("text-area") as UIKit.Text;
-      const musicButton = this.document.getElementById("audio-button") as UIKit.Text;
-      const vrButton = this.document.getElementById("vr-ar-button") as UIKit.Text;
-      const skyboxButton = this.document.getElementById("skybox-button") as UIKit.Text;
-      const frontBtn = this.document.getElementById("front-view-button") as UIKit.Text;
-      const sideBtn = this.document.getElementById("side-view-button") as UIKit.Text;
-
-      const savedPanel = this.document.getElementById("saved-panel") as UIKit.Container;
-      const savedList = this.document.getElementById("saved-list") as UIKit.Container;
-      const savedEmpty = this.document.getElementById("saved-empty") as UIKit.Text;
-      const savedClose = this.document.getElementById("saved-close-button") as UIKit.Text;
-      const savedMore = this.document.getElementById("saved-load-more") as UIKit.Text;
-      const savedBtn = this.document.getElementById("saved-models-button") as UIKit.Text;
-
-      // PRESET UI  
-      const presetPanel = this.document.getElementById("preset-panel") as UIKit.Container;
-      const presetList = this.document.getElementById("preset-list") as UIKit.Container;
-      const presetEmpty = this.document.getElementById("preset-empty") as UIKit.Text;
-      const presetClose = this.document.getElementById("preset-close-button") as UIKit.Text;
-      const presetMore = this.document.getElementById("preset-load-more") as UIKit.Text;
-      const presetBtn = this.document.getElementById("preset-models-button") as UIKit.Text;
-
-      // bind esplicito ai bottoni degli 8 slot
-      const slotButtons: UIKit.Text[] = [];
-      for (let i = 1; i <= 4; i++) {
-        const btn = this.document.getElementById(`saved-btn-${i}`) as UIKit.Text;
-        if (btn) {
-          slotButtons.push(btn);
-          btn.addEventListener("click", async (e: any) => {
-            if (!this._consumeOnce(e)) return;
-            await this._onSavedSlotClick(i - 1); // indice 0..7
-          });
-        }
-      }
-
-      // -------------------------
-      // bind bottoni PRESET (4 slot)
-      // -------------------------
-      for (let i = 1; i <= 4; i++) {
-        const btn = this.document.getElementById(`preset-btn-${i}`) as UIKit.Text;
-        if (btn) {
-          btn.addEventListener("click", async (e: any) => {
-            if (!this._consumeOnce(e)) return;
-            await this._onPresetSlotClick(i - 1); // indice 0..3
-          });
-        }
-      }
-
-      frontBtn.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.pickView("front", frontBtn, sideBtn);
-      });
-
-      sideBtn.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.pickView("side", frontBtn, sideBtn);
-      });
-
-      /* generaButton.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.handleGenerateWithRigging(this.document!, textPrompt);
-      }); */
-
-      noRiggingButton.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.handleGenerateNoRigging(this.document!, textPrompt);
-      });
-
-      /* musicButton.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.playMusic();
-      }); */
-
-      vrButton.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.vrButtonClick();
-      });
-
-      this.world.visibilityState.subscribe((visibilityState) => {
-        if (visibilityState === VisibilityState.NonImmersive) {
-          vrButton.setProperties({ text: "AR" });
-        } else {
-          vrButton.setProperties({ text: "Esci" });
-        }
-      });
-
-      /** Skybox button handler */
-      let isActive = false;
-      skyboxButton.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        console.log("Skybox button clicked");
-
-        // rimuovi/nascondi environment esistenti
-        for (const envEntity of this.queries.environments.entities) {
-          try { envEntity.removeComponent?.(LocomotionEnvironment); } catch { }
-          const obj = envEntity.object3D;
-          if (obj) { obj.visible = false; obj.parent?.remove(obj); }
-        }
-
-        if (!isActive) {
-          const gltf = AssetManager.getGLTF("simpHouse");
-          const envMeshNew = gltf.scene.clone(true);
-
-          // togli l’environment dal raycast della UI
-          envMeshNew.traverse((o: any) => {
-            if (o?.isMesh) { o.raycast = () => { }; }
-          });
-
-          envMeshNew.rotation.set(0, Math.PI, 0);
-          envMeshNew.position.set(0, -0.1, 0);
-
-          this.world
-            .createTransformEntity(envMeshNew)
-            .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
-
-          isActive = true;
-        } else {
-          const gltf = AssetManager.getGLTF("environmentDesk");
-          const envMeshNewNew = gltf.scene.clone(true);
-
-          envMeshNewNew.traverse((o: any) => {
-            if (o?.isMesh) { o.raycast = () => { }; }
-          });
-
-          envMeshNewNew.rotation.set(0, Math.PI, 0);
-          envMeshNewNew.position.set(0, -0.1, 0);
-
-          this.world
-            .createTransformEntity(envMeshNewNew)
-            .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
-
-          isActive = false;
-        }
-      });
-
-      // handler pannello "Modelli salvati"
-      savedBtn.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.openSavedPanel(savedPanel, savedList, savedEmpty);
-      });
-
-      savedClose.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.closeSavedPanel(savedPanel);
-      });
-
-      // (stub per futura paginazione)
-      savedMore.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        const total = this.saved.length;
-        if (total === 0) return;
-
-        const totalPages = Math.ceil(total / this.pageSize);
-        this.savedPage = (this.savedPage + 1) % Math.max(totalPages, 1);
-        this.renderSavedList(savedList, savedEmpty, { reset: true });
-      });
-
-      // -------------------------
-      // handler pannello "Preset Models
-      // -------------------------
-      presetBtn.addEventListener("click", async (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        await this.openPresetPanel(presetPanel, presetList, presetEmpty);
-      });
-
-      presetClose.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        this.closePresetPanel(presetPanel);
-      });
-
-      presetMore.addEventListener("click", (e: any) => {
-        if (!this._consumeOnce(e)) return;
-        const total = this.presets.length;
-        if (total === 0) return;
-
-        const totalPages = Math.ceil(total / this.presetPageSize);
-        this.presetPage = (this.presetPage + 1) % Math.max(totalPages, 1);
-        this.renderPresetList(presetList, presetEmpty, { reset: true });
-      });
-    });
-  }
-
-  update(dt: number, time: number) { this._tickXR(dt, time); }
-
-  /** Costruisce il prompt con la vista selezionata */
-  private buildPrompt(baseRaw: unknown): string {
-    const base = (baseRaw ?? "").toString().trim();
-    if (!base) return "";
-    if (this.selectedView === "front") return `front view ${base}`;
-    if (this.selectedView === "side") return `side view ${base}`;
-    return base;
-  }
-
-  /** Seleziona/deseleziona la vista e aggiorna i bottoni */
-  private pickView(
-    view: "front" | "side",
-    frontBtn: UIKit.Text,
-    sideBtn: UIKit.Text
-  ) {
-    // toggle: se clicchi la stessa, deseleziona
-    if (this.selectedView === view) {
-      this.selectedView = null;
-
-      frontBtn.setProperties({
-        text: "Frontale",
-        backgroundColor: "#fafafa",
-        color: "#09090b",
-      });
-
-      sideBtn.setProperties({
-        text: "Laterale",
-        backgroundColor: "#fafafa",
-        color: "#09090b",
-      });
-
-      return;
+  update(dt: number, time: number) {
+    if (!this.xrInput || this.world.visibilityState.value === VisibilityState.NonImmersive) return;
+    const xr = (this.world as any).xr || (this.world as any).renderer?.xr || (this.world as any).xrManager;
+    this.xrInput.update(xr, dt, time);
+    if (this.xrInput.gamepads.right?.getButtonDown('b-button')) {
+      const p = this.document?.getElementById("pannello-prompt") as UIKit.Container;
+      if (!p) return;
+      const nextVis = p.properties.value.visibility === "hidden" ? "visible" : "hidden";
+      p.setProperties({ visibility: nextVis });
+      if (nextVis === "hidden") this.closeSecondary();
     }
-
-    this.selectedView = view;
-
-    if (view === "front") {
-      frontBtn.setProperties({ backgroundColor: "#4ade80", color: "#09090b" });
-      sideBtn.setProperties({ backgroundColor: "#fafafa", color: "#09090b" });
-    } else {
-      sideBtn.setProperties({ backgroundColor: "#4ade80", color: "#09090b" });
-      frontBtn.setProperties({ backgroundColor: "#fafafa", color: "#09090b" });
-    }
-  }
-
-  private a_touch = 0;
-
-  /** Gestione input XR */
-  private _tickXR(dt: number, time: number) {
-    if (!this.xrInput) return;
-    if (this.world.visibilityState.value === VisibilityState.NonImmersive) return;
-
-    const xrHandle = (this.world as any).xr
-      ?? (this.world as any).renderer?.xr
-      ?? (this.world as any).xrManager
-      ?? undefined;
-
-    this.xrInput.update(xrHandle, dt, time);
-
-    const rightPad = this.xrInput.gamepads.right;
-    if (!rightPad) return;
-
-    if (rightPad.getButtonDown('b-button')) {
-      const panel = this.document?.getElementById("pannello-prompt") as UIKit.Container;
-      if (!panel) return;
-      console.log("Toggle pannello prompt:", panel.properties.value.visibility);
-      panel.setProperties({ visibility: panel.properties.value.visibility === "hidden" ? "visible" : "hidden" });
-
-      // Chiudi il pannello "Modelli salvati" se era aperto
-      if (panel.properties.value.visibility === "hidden") {
-        const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
-        if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
-          this.closeSavedPanel(savedPanel);
-        }
-
-        // ✅ Chiudi il pannello "Preset Models" se era aperto (AGGIUNTO)
-        const presetPanel = this.document?.getElementById("preset-panel") as UIKit.Container;
-        if (presetPanel && presetPanel.properties?.value?.visibility === "visible") {
-          this.closePresetPanel(presetPanel);
-        }
-      }
-    }
-
-    // Triple tap 'A' per easter-egg
-    if (rightPad.getButtonDown('a-button')) {
-      this.a_touch++;
-      if (this.a_touch == 3) {
-        const musicEgg = AssetManager.getAudio("eggSound");
-        this.musicEgg = this.createEntity();
-        this.musicEgg.addComponent(AudioSource, {
-          src: PanelSystem.AUDIO_EGG_SRC,
-          loop: false,
-          positional: false,
-          volume: 0.30,
-          autoplay: false,
-        });
-        this.a_touch = 0;
-        AudioUtils.play(this.musicEgg, 0.2);
-      }
-    }
-  }
-
-  /** Genera un modello 3D con rigging
-  private async handleGenerateWithRigging(document: UIKitDocument, textPrompt: UIKit.Text) {
-    const prompt = this.buildPrompt(textPrompt?.currentSignal?.v);
-    console.log("Prompt inserito:", prompt);
-
-    this.hidePromptPanel(document);
-
-    // Chiudi il pannello "Modelli salvati" se era aperto
-    const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
-    if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
-      this.closeSavedPanel(savedPanel);
-    }
-
-
-    //modello provvisorio fino a che non funziona il server di generazione
-    const temp = this.placeLoadedModel("loading", { x: 0, y: 2, z: -1 });
-    setTimeout(() => {
-      temp
-        .addComponent(Interactable)
-        .addComponent(TwoHandsGrabbable, {
-          translate: true,
-          rotate: true,
-          scale: true,
-        });
-    }, 100);
-
-    if (!prompt) {
-      textPrompt.setProperties({ placeholder: "Inserisci un prompt valido." });
-      console.warn("Nessun prompt inserito.");
-      return;
-    }
-
-    try {
-      const blob = await this.postForModel("/api/generate", { prompt, rig: true, view: this.selectedView });
-      await this.loadModelFromBlob(blob, "dynamicModel");
-
-      //Rimuovi il modello provvisorio
-      this.world.entityManager.getEntityByIndex(temp.index)?.destroy();
-
-      const ent = this.placeLoadedModel("dynamicModel", { x: 0, y: 1, z: -1 });
-      setTimeout(() => {
-        ent
-          .addComponent(Interactable)
-          .addComponent(TwoHandsGrabbable, {
-            translate: true,
-            rotate: true,
-            scale: true,
-          });
-      }, 100);
-    } catch (error) {
-      this.onGenerationError(error as Error, textPrompt);
-    }
-  } */
-
-  /** Genera un modello 3D senza rigging */
-  private async handleGenerateNoRigging(document: UIKitDocument, textPrompt: UIKit.Text) {
-    const prompt = this.buildPrompt(textPrompt?.currentSignal?.v);
-    console.log("Prompt inserito:", prompt);
-
-    this.hidePromptPanel(document);
-
-    // Chiudi il pannello "Modelli salvati" se era aperto
-    const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
-    if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
-      this.closeSavedPanel(savedPanel);
-    }
-
-    //Chiudi il pannello "Preset Models" se era aperto
-    const presetPanel = this.document?.getElementById("preset-panel") as UIKit.Container;
-    if (presetPanel && presetPanel.properties?.value?.visibility === "visible") {
-      this.closePresetPanel(presetPanel);
-    }
-
-
-    //modello provvisorio fino a che non funziona il server di generazione
-    const temp = this.placeLoadedModel("loading", { x: 0, y: 2, z: -1 });
-    setTimeout(() => {
-      temp
-        .addComponent(Interactable)
-        .addComponent(TwoHandsGrabbable, {
-          translate: true,
-          rotate: true,
-          scale: true,
-        });
-    }, 100);
-
-    if (!prompt) {
-      textPrompt.setProperties({ placeholder: "Inserisci un prompt valido." });
-      console.warn("Nessun prompt inserito.");
-      return;
-    }
-
-    try {
-      const blob = await this.postForModel("/api/generate3dOnly", { prompt, rig: true, view: this.selectedView });
-      await this.loadModelFromBlob(blob, "dynamicModel");
-
-      //Rimuovi il modello provvisorio
-      this.world.entityManager.getEntityByIndex(temp.index)?.destroy();
-
-      const ent = this.placeLoadedModel("dynamicModel", { x: 0, y: 1, z: -1 });
-      setTimeout(() => {
-        ent
-          .addComponent(Interactable)
-          .addComponent(TwoHandsGrabbable, {
-            translate: true,
-            rotate: true,
-            scale: true,
-          });
-      }, 100);
-    } catch (error) {
-      this.onGenerationError(error as Error, textPrompt);
-    }
-  }
-
-  // cattura X-Model-Id, salva entry, aggiorna lista se aperta
-  private async postForModel(url: string, body: { prompt: string; rig?: boolean; view?: "front" | "side" | null }): Promise<Blob> {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-
-    if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || `Richiesta fallita: ${res.status}`);
-    }
-
-    const id = res.headers.get("X-Model-Id") || "";
-    const blob = await res.blob();
-
-    if (id) {
-      this.saved.push({
-        id,
-        prompt: body.prompt,
-        view: body.view ?? this.selectedView ?? null,
-        rig: Boolean(body.rig),
-        ts: Date.now(),
-      });
-      this._saveToLS();
-
-      // se il pannello è aperto, aggiorna la lista
-      const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
-      if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
-        const list = this.document!.getElementById("saved-list") as UIKit.Container;
-        const empty = this.document!.getElementById("saved-empty") as UIKit.Text;
-        this.renderSavedList(list, empty, { reset: true });
-      }
-    } else {
-      console.warn("X-Model-Id non presente nella risposta.");
-    }
-
-    return blob;
-  }
-
-  private async loadModelFromBlob(blob: Blob, key: string): Promise<void> {
-    const glbUrl = URL.createObjectURL(blob);
-    await AssetManager.loadGLTF(glbUrl, key);
-  }
-
-  private placeLoadedModel(
-    key: string,
-    position: { x: number; y: number; z: number }
-  ): Entity {
-    const gltf = AssetManager.getGLTF(key);
-    if (!gltf) {
-      setTimeout(() => {
-        const retry = AssetManager.getGLTF(key);
-        if (!retry) {
-          console.warn(`[AssetManager] GLTF '${key}' non ancora pronto.`);
-          return;
-        }
-        const { scene: mesh } = retry;
-        mesh.position.set(position.x, position.y, position.z);
-        this.world.createTransformEntity(mesh);
-      }, 0);
-      return this.world.createTransformEntity();
-    }
-
-    const { scene: dynamicMesh } = gltf;
-    dynamicMesh.position.set(position.x, position.y, position.z);
-
-    //Gira il modello di 180 gradi
-    dynamicMesh.rotation.y = Math.PI;
-    const ent = this.world.createTransformEntity(dynamicMesh);
-    return ent;
-  }
-
-  /** Nasconde il pannello prompt */
-  private hidePromptPanel(document: UIKitDocument) {
-    const pannelloPrompt = document.getElementById("pannello-prompt") as UIKit.Container;
-    if (pannelloPrompt) {
-      pannelloPrompt.setProperties({ visibility: "hidden" });
-    }
-  }
-
-  private onGenerationError(error: Error, textPrompt: UIKit.Text) {
-    console.error("Failed to load dynamic asset:", error);
-    textPrompt.setProperties({ placeholder: "Errore nella generazione!!." });
-    console.warn("Errore nella generazione!!.");
-  }
-
-  /** Music button handler
-  private playMusic = () => {
-    console.log("Toggling music playback");
-    if (!this.musicEntity || !this.musicEntity.hasComponent(AudioSource)) {
-      this.musicEntity = this.createEntity();
-      this.musicEntity.addComponent(AudioSource, {
-        src: PanelSystem.MUSIC_SRC,
-        loop: true,
-        positional: false,
-        volume: 0.75,
-        autoplay: false,
-      });
-    }
-
-    if (!AudioUtils.isPlaying(this.musicEntity)) {
-      AudioUtils.play(this.musicEntity, 0.2);
-    } else {
-      AudioUtils.pause(this.musicEntity, 0.2);
-    }
-  }; */
-
-  /** VR/AR button handler */
-  private vrButtonClick = () => {
-    console.log("VR/AR button clicked");
-    if (this.world.visibilityState.value === VisibilityState.NonImmersive) {
-      this.world.launchXR();
-    } else {
-      this.world.exitXR();
-    }
-  };
-
-  // helper per aprire/chiudere pannello e renderizzare la lista
-  private openSavedPanel(savedPanel: UIKit.Container, savedList: UIKit.Container, savedEmpty: UIKit.Text) {
-    savedPanel.setProperties({ visibility: "visible" });
-
-    // ri-mostra i container base
-    savedList.setProperties({ visibility: "visible" });
-    savedEmpty.setProperties({ visibility: "visible" });
-
-    this.savedPage = 0;
-    this.renderSavedList(savedList, savedEmpty, { reset: true });
-  }
-
-  private closeSavedPanel(savedPanel: UIKit.Container) {
-    // nascondi pannello
-    savedPanel.setProperties({ visibility: "hidden" });
-
-    // nascondi esplicitamente lista + empty + tutti gli 8 slot
-    const list = this.document?.getElementById("saved-list") as UIKit.Container;
-    const empty = this.document?.getElementById("saved-empty") as UIKit.Text;
-
-    empty?.setProperties({ visibility: "hidden" });
-    list?.setProperties({ visibility: "hidden" });
-
-    for (let i = 1; i <= 4; i++) {
-      const row = this.document?.getElementById(`saved-row-${i}`) as UIKit.Container;
-      const label = this.document?.getElementById(`saved-label-${i}`) as UIKit.Text;
-      const btn = this.document?.getElementById(`saved-btn-${i}`) as UIKit.Text;
-
-      row?.setProperties({ visibility: "hidden" });
-      label?.setProperties({ visibility: "hidden" });
-      btn?.setProperties({ visibility: "hidden" });
-    }
-  }
-
-  private renderSavedList(
-    savedList: UIKit.Container,
-    savedEmpty: UIKit.Text,
-    opts: { reset?: boolean; append?: boolean } = {}
-  ) {
-    const itemsAll = [...this.saved].sort((a, b) => b.ts - a.ts);
-    const hasItems = itemsAll.length > 0;
-    savedEmpty.setProperties({ visibility: hasItems ? "hidden" : "visible" });
-
-    const start = this.savedPage * this.pageSize;
-    const pageItems = itemsAll.slice(start, start + this.pageSize);
-
-    // reimposta gli id degli slot per la pagina corrente
-    this._slotModelIds = new Array(this.pageSize).fill("");
-
-    for (let i = 0; i < this.pageSize; i++) {
-      const row = this.document!.getElementById(`saved-row-${i + 1}`) as UIKit.Container;
-      const label = this.document!.getElementById(`saved-label-${i + 1}`) as UIKit.Text;
-      const btn = this.document!.getElementById(`saved-btn-${i + 1}`) as UIKit.Text;
-
-      const it = pageItems[i];
-      if (!row || !label || !btn) continue;
-
-      if (!it) {
-        row.setProperties({ visibility: "hidden" });
-        label.setProperties({ text: "—", visibility: "hidden" });
-        btn.setProperties({ visibility: "hidden" });
-        continue;
-      }
-
-      const shortPrompt = it.prompt && it.prompt.length > 48 ? (it.prompt.slice(0, 48) + "…") : (it.prompt || "");
-      this._slotModelIds[i] = it.id;
-
-      label.setProperties({ text: shortPrompt, visibility: "visible" });
-      btn.setProperties({
-        visibility: "visible",
-        text: this._isModelLoaded(it.id) ? "Elimina" : "Carica",
-      });
-      row.setProperties({ visibility: "visible" });
-    }
-  }
-
-  // scarica un modello salvato dal backend per ID
-  private async getSavedModelBlob(modelId: string): Promise<Blob> {
-
-    const res = await fetch(`/api/models/${modelId}`, { method: "GET" });
-    console.log("GET /api/models/", modelId, "→", res.status);
-    if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || `Impossibile recuperare il modello ${modelId}`);
-    }
-    return res.blob();
-  }
-
-  private async _onSavedSlotClick(slotIndex: number) {
-    const modelId = this._slotModelIds?.[slotIndex];
-    if (!modelId) {
-      console.warn("Nessun modelId associato allo slot", slotIndex);
-      return;
-    }
-
-    const btn = this.document?.getElementById(`saved-btn-${slotIndex + 1}`) as UIKit.Text;
-    const isLoaded = this._isModelLoaded(modelId);
-
-    // --- ELIMINA ---
-    if (isLoaded || btn?.properties.value.text === "Elimina") {
-      this._unloadModel(modelId);
-      btn?.setProperties?.({ text: "Carica" });
-      console.log("Eliminato modello in scena:", modelId);
-      return;
-    }
-
-    // --- CARICA ---
-    try {
-      console.log("Carico modello salvato:", modelId);
-      btn?.setProperties?.({ text: "Elimina" });
-      const blob = await this.getSavedModelBlob(modelId);
-      const key = `savedModel-${modelId}`;
-      await this.loadModelFromBlob(blob, key);
-
-      const ent = this.placeLoadedModel(key, { x: 0, y: 1, z: -1.2 });
-      setTimeout(() => {
-        ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, {
-          translate: true, rotate: true, scale: true,
-        });
-      }, 100);
-
-      this._markLoaded(modelId, ent);
-    } catch (err) {
-      console.error("Errore nel recupero del modello:", err);
-      const promptInput = this.document!.getElementById("text-area") as UIKit.Text;
-      promptInput?.setProperties?.({ placeholder: "Errore nel recupero del modello salvato." });
-    }
-  }
-
-  private _isModelLoaded(modelId: string): boolean {
-    return (this._entitiesByModelId.get(modelId)?.length ?? 0) > 0;
-  }
-
-  private _markLoaded(modelId: string, ent: Entity) {
-    const arr = this._entitiesByModelId.get(modelId) ?? [];
-    arr.push(ent);
-    this._entitiesByModelId.set(modelId, arr);
-  }
-
-  private _unloadModel(modelId: string) {
-    const arr = this._entitiesByModelId.get(modelId) ?? [];
-    for (const e of arr) {
-      try { e.destroy?.(); } catch { }
-    }
-    this._entitiesByModelId.delete(modelId);
-  }
-
-  // -------------------------
-  // PRESET: FETCH LIST + BLOB
-  // -------------------------
-  // Endpoint atteso:
-  // - GET  /api/presets            -> JSON array [{id,name,ts},...]
-  // - GET  /api/presets/<presetId> -> blob GLB/GLTF
-  private async fetchPresets(): Promise<Array<{ id: string; name?: string; prompt?: string; ts?: number }>> {
-    const res = await fetch("/api/presets", { method: "GET" });
-    console.log("GET /api/presets →", res.status);
-
-    if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || "Impossibile recuperare la lista preset");
-    }
-
-    const data = await res.json();
-    const items = Array.isArray(data) ? data : (data?.items ?? []);
-    return items;
-  }
-
-  private async getPresetModelBlob(presetId: string): Promise<Blob> {
-    const res = await fetch(`/api/presets/${encodeURIComponent(presetId)}`, { method: "GET" });
-    console.log("GET /api/presets/", presetId, "→", res.status);
-
-    if (!res.ok) {
-      const msg = await res.text();
-      throw new Error(msg || `Impossibile recuperare il preset ${presetId}`);
-    }
-    return res.blob();
-  }
-
-  // -------------------------
-  // PRESET PANEL HELPERS
-  // -------------------------
-  private async openPresetPanel(presetPanel: UIKit.Container, presetList: UIKit.Container, presetEmpty: UIKit.Text) {
-    presetPanel.setProperties({ visibility: "visible" });
-
-    presetList.setProperties({ visibility: "visible" });
-    presetEmpty.setProperties({ visibility: "visible" });
-
-    this.presetPage = 0;
-
-    try {
-      this.presets = await this.fetchPresets();
-    } catch (err) {
-      console.error("Errore fetch preset:", err);
-      this.presets = [];
-    }
-
-    this.renderPresetList(presetList, presetEmpty, { reset: true });
-  }
-
-  private closePresetPanel(presetPanel: UIKit.Container) {
-    presetPanel.setProperties({ visibility: "hidden" });
-
-    const list = this.document?.getElementById("preset-list") as UIKit.Container;
-    const empty = this.document?.getElementById("preset-empty") as UIKit.Text;
-
-    empty?.setProperties({ visibility: "hidden" });
-    list?.setProperties({ visibility: "hidden" });
-
-    for (let i = 1; i <= 4; i++) {
-      const row = this.document?.getElementById(`preset-row-${i}`) as UIKit.Container;
-      const label = this.document?.getElementById(`preset-label-${i}`) as UIKit.Text;
-      const btn = this.document?.getElementById(`preset-btn-${i}`) as UIKit.Text;
-
-      row?.setProperties({ visibility: "hidden" });
-      label?.setProperties({ visibility: "hidden" });
-      btn?.setProperties({ visibility: "hidden" });
-    }
-  }
-
-  private renderPresetList(
-    presetList: UIKit.Container,
-    presetEmpty: UIKit.Text,
-    opts: { reset?: boolean; append?: boolean } = {}
-  ) {
-    const itemsAll = [...this.presets].sort((a, b) => (b.ts ?? 0) - (a.ts ?? 0));
-    const hasItems = itemsAll.length > 0;
-    presetEmpty.setProperties({ visibility: hasItems ? "hidden" : "visible" });
-
-    const start = this.presetPage * this.presetPageSize;
-    const pageItems = itemsAll.slice(start, start + this.presetPageSize);
-
-    this._slotPresetIds = new Array(this.presetPageSize).fill("");
-
-    for (let i = 0; i < this.presetPageSize; i++) {
-      const row = this.document!.getElementById(`preset-row-${i + 1}`) as UIKit.Container;
-      const label = this.document!.getElementById(`preset-label-${i + 1}`) as UIKit.Text;
-      const btn = this.document!.getElementById(`preset-btn-${i + 1}`) as UIKit.Text;
-
-      const it = pageItems[i];
-      if (!row || !label || !btn) continue;
-
-      if (!it) {
-        row.setProperties({ visibility: "hidden" });
-        label.setProperties({ text: "—", visibility: "hidden" });
-        btn.setProperties({ visibility: "hidden" });
-        continue;
-      }
-
-      const title = it.name || it.prompt || it.id;
-      const shortTitle = title && title.length > 48 ? (title.slice(0, 48) + "…") : (title || "");
-      this._slotPresetIds[i] = it.id;
-
-      label.setProperties({ text: shortTitle, visibility: "visible" });
-      btn.setProperties({
-        visibility: "visible",
-        text: this._isPresetLoaded(it.id) ? "Elimina" : "Carica",
-      });
-      row.setProperties({ visibility: "visible" });
-    }
-  }
-
-  private async _onPresetSlotClick(slotIndex: number) {
-    const presetId = this._slotPresetIds?.[slotIndex];
-    if (!presetId) {
-      console.warn("Nessun presetId associato allo slot", slotIndex);
-      return;
-    }
-
-    const btn = this.document?.getElementById(`preset-btn-${slotIndex + 1}`) as UIKit.Text;
-    const isLoaded = this._isPresetLoaded(presetId);
-
-    // --- ELIMINA ---
-    if (isLoaded || btn?.properties.value.text === "Elimina") {
-      this._unloadPreset(presetId);
-      btn?.setProperties?.({ text: "Carica" });
-      console.log("Eliminato preset in scena:", presetId);
-      return;
-    }
-
-    // --- CARICA ---
-    try {
-      console.log("Carico preset:", presetId);
-      btn?.setProperties?.({ text: "Elimina" });
-
-      const blob = await this.getPresetModelBlob(presetId);
-      const key = `presetModel-${presetId}`;
-      await this.loadModelFromBlob(blob, key);
-
-      const ent = this.placeLoadedModel(key, { x: 0, y: 1, z: -1.2 });
-      setTimeout(() => {
-        ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, {
-          translate: true, rotate: true, scale: true,
-        });
-      }, 100);
-
-      this._markPresetLoaded(presetId, ent);
-    } catch (err) {
-      console.error("Errore nel recupero preset:", err);
-      const promptInput = this.document!.getElementById("text-area") as UIKit.Text;
-      promptInput?.setProperties?.({ placeholder: "Errore nel recupero preset." });
-      btn?.setProperties?.({ text: "Carica" });
-    }
-  }
-
-  private _isPresetLoaded(presetId: string): boolean {
-    return (this._entitiesByPresetId.get(presetId)?.length ?? 0) > 0;
-  }
-
-  private _markPresetLoaded(presetId: string, ent: Entity) {
-    const arr = this._entitiesByPresetId.get(presetId) ?? [];
-    arr.push(ent);
-    this._entitiesByPresetId.set(presetId, arr);
-  }
-
-  private _unloadPreset(presetId: string) {
-    const arr = this._entitiesByPresetId.get(presetId) ?? [];
-    for (const e of arr) {
-      try { e.destroy?.(); } catch { }
-    }
-    this._entitiesByPresetId.delete(presetId);
   }
 }

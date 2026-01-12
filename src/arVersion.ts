@@ -47,7 +47,7 @@ const assets: AssetManifest = {
 World.create(document.getElementById("scene-container") as HTMLDivElement, {
   assets,
   xr: {
-    sessionMode: SessionMode.ImmersiveVR, //O ImmersiveVR
+    sessionMode: SessionMode.ImmersiveAR, //O ImmersiveVR
     offer: "always",
       features: {
         handTracking: true,
@@ -59,9 +59,7 @@ World.create(document.getElementById("scene-container") as HTMLDivElement, {
     },
   },
   features: {
-    locomotion: { useWorker: true },
     grabbing: true,
-    physics: true,
     sceneUnderstanding: false,
   },
   level: "/glxf/Composition.glxf",
@@ -71,13 +69,8 @@ World.create(document.getElementById("scene-container") as HTMLDivElement, {
   camera.position.set(-4, 1.5, -6);
   camera.rotateY(-Math.PI * 0.75);
 
-  const { scene: envMeshOrigin } = AssetManager.getGLTF("environmentDesk")!;
-  const envMesh = envMeshOrigin.clone(true);
-  envMesh.rotateY(Math.PI);
-  envMesh.position.set(0, -0.1, 0);
   world
-    .createTransformEntity(envMesh)
-    .addComponent(LocomotionEnvironment, { type: EnvironmentType.STATIC });
+    .createTransformEntity()
 
   const scene = world.scene;
       
