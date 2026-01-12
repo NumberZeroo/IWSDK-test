@@ -108,51 +108,49 @@
     pointer-events: none;
   }
 
-.saved-list {
-  display: flex;
-  flex-direction: column;
-  gap: 2;
-  max-height: 28;
-  padding-top: 0.5;
-}
+  .saved-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2;
+    max-height: 28;
+    padding-top: 0.5;
+  }
 
-.saved-row {
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1;
+  .saved-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1;
 
-  border-width: 0.15;
-  border-color: #3f3f46;
+    border-width: 0.15;
+    border-color: #3f3f46;
 
-  padding-left: 1;
-  padding-top: 3;
-  padding-bottom: 3;
-}
+    padding-left: 1;
+    padding-top: 3;
+    padding-bottom: 3;
+  }
 
-.saved-label {
-  text-align: left;
-  flex: 1;
-  max-width: 100%;
-  overflow: hidden;
-  padding-right: 1;
-}
+  .saved-label {
+    text-align: left;
+    flex: 1;
+    max-width: 100%;
+    overflow: hidden;
+    padding-right: 1;
+  }
 
-.saved-btn {
-  width: auto;
-  flex: 0 0 auto;
-  padding-left: 2;
-  padding-right: 2;
-  margin-left: 1;
-}
-
+  .saved-btn {
+    width: auto;
+    flex: 0 0 auto;
+    padding-left: 2;
+    padding-right: 2;
+    margin-left: 1;
+  }
 </style>
 
 <div id="pannello-prompt">
   <!-- WRAPPER A DUE COLONNE -->
   <div class="row" style="align-items: flex-start; gap: 2;">
-
     <!-- COLONNA SINISTRA: pannello principale -->
     <div class="outer-panel" style="flex: 1 1 60%;">
       <!-- BLOCCO ALTO: MODELLO -->
@@ -162,38 +160,47 @@
         <div class="row" style="align-items:center; gap: 1.5; max-width: 60%; margin: 0 auto;">
           <span class="tile-label">Vista:</span>
 
-          <button class="button" id="front-view-button" data-view="front" aria-pressed="false"
-                  style="width:auto; padding-left:2; padding-right:2;">
+          <button
+            class="button"
+            id="front-view-button"
+            data-view="front"
+            aria-pressed="false"
+            style="width:auto; padding-left:2; padding-right:2;"
+          >
             Frontale
           </button>
 
-          <button class="button" id="side-view-button" data-view="side" aria-pressed="false"
-                  style="width:auto; padding-left:2; padding-right:2;">
+          <button
+            class="button"
+            id="side-view-button"
+            data-view="side"
+            aria-pressed="false"
+            style="width:auto; padding-left:2; padding-right:2;"
+          >
             Laterale
           </button>
         </div>
 
         <div class="row">
-          <button class="button" id="genera-button">Genera Rig</button>
-          <button class="button" id="no-rigging-button">Genera No Rig</button>
+          <!-- <button class="button" id="genera-button">Genera Rig</button> -->
+          <button class="button" id="no-rigging-button">Genera modello</button>
         </div>
       </div>
 
       <!-- BLOCCO IN BASSO: TOOLBAR -->
       <div class="panel-card">
         <div class="toolbar">
-          <button class="tile" id="audio-button">Audio</button>
+          <!-- <button class="tile" id="audio-button">Audio</button> -->
           <button class="tile" id="vr-ar-button">Esci</button>
           <button class="tile" id="skybox-button">Cambia sfondo</button>
           <button class="tile" id="saved-models-button">Modelli salvati</button>
+          <button class="tile" id="preset-models-button">Preset Models</button>
         </div>
       </div>
     </div>
 
     <!-- COLONNA DESTRA: pannello "Modelli salvati" (nascosto inizialmente) -->
-    <div class="outer-panel" id="saved-panel"
-        style="flex: 0 0 38%; max-width: 38%; visibility: hidden;">
-
+    <div class="outer-panel" id="saved-panel" style="flex: 0 0 38%; max-width: 38%; visibility: hidden;">
       <div class="panel-card">
         <div class="heading">Modelli salvati</div>
 
@@ -231,6 +238,51 @@
             Chiudi
           </button>
           <button class="button" id="saved-load-more" style="width:auto; padding-left:2; padding-right:2; margin-top: 2;">
+            Mostra altri
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLONNA DESTRA: pannello "Preset Models" (nascosto inizialmente) -->
+    <div class="outer-panel" id="preset-panel" style="flex: 0 0 38%; max-width: 38%; visibility: hidden;">
+      <div class="panel-card">
+        <div class="heading">Preset Models</div>
+
+        <!-- EMPTY STATE -->
+        <div id="preset-empty" class="tile-label" style="opacity: 0.8; text-align: left;">
+          Nessun preset disponibile.
+        </div>
+
+        <!-- LISTA SCORRIBILE -->
+        <div id="preset-list" class="saved-list">
+          <div class="saved-row" id="preset-row-1" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="preset-label-1">—</div>
+            <button class="button saved-btn" id="preset-btn-1">Carica</button>
+          </div>
+
+          <div class="saved-row" id="preset-row-2" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="preset-label-2">—</div>
+            <button class="button saved-btn" id="preset-btn-2">Carica</button>
+          </div>
+
+          <div class="saved-row" id="preset-row-3" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="preset-label-3">—</div>
+            <button class="button saved-btn" id="preset-btn-3">Carica</button>
+          </div>
+
+          <div class="saved-row" id="preset-row-4" style="visibility: hidden;">
+            <div class="tile-label saved-label" id="preset-label-4">—</div>
+            <button class="button saved-btn" id="preset-btn-4">Carica</button>
+          </div>
+        </div>
+
+        <!-- AZIONI PANNELLO -->
+        <div class="row" style="margin-top: 1;">
+          <button class="button" id="preset-close-button" style="width:auto; padding-left:2; padding-right:2; margin-top: 2;">
+            Chiudi
+          </button>
+          <button class="button" id="preset-load-more" style="width:auto; padding-left:2; padding-right:2; margin-top: 2;">
             Mostra altri
           </button>
         </div>

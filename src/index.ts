@@ -71,7 +71,7 @@ World.create(document.getElementById("scene-container") as HTMLDivElement, {
   camera.position.set(-4, 1.5, -6);
   camera.rotateY(-Math.PI * 0.75);
 
-  const { scene: envMeshOrigin } = AssetManager.getGLTF("simpHouse")!;
+  const { scene: envMeshOrigin } = AssetManager.getGLTF("environmentDesk")!;
   const envMesh = envMeshOrigin.clone(true);
   envMesh.rotateY(Math.PI);
   envMesh.position.set(0, -0.1, 0);

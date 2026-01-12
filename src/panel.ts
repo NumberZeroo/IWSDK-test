@@ -56,6 +56,19 @@ export class PanelSystem extends createSystem({
   // gli id mostrati negli slot della pagina corrente (riempito in renderSavedList)
   private _slotModelIds: string[] = new Array(this.pageSize).fill("");
 
+  // PRESET MODELS
+  private presetPage = 0;
+  private readonly presetPageSize = 4;
+
+  // lista preset presa dal backend (id = filename o id backend)
+  private presets: Array<{ id: string; name?: string; prompt?: string; ts?: number }> = [];
+
+  // gli id mostrati negli slot preset della pagina corrente
+  private _slotPresetIds: string[] = new Array(this.presetPageSize).fill("");
+
+  // preset caricati in scena: presetId -> array di Entity
+  private _entitiesByPresetId = new Map<string, Entity[]>();
+
 
   private _saveToLS() {
     try { localStorage.setItem("savedModels", JSON.stringify(this.saved)); } catch { }
@@ -110,6 +123,14 @@ export class PanelSystem extends createSystem({
       const savedMore = this.document.getElementById("saved-load-more") as UIKit.Text;
       const savedBtn = this.document.getElementById("saved-models-button") as UIKit.Text;
 
+      // PRESET UI  
+      const presetPanel = this.document.getElementById("preset-panel") as UIKit.Container;
+      const presetList = this.document.getElementById("preset-list") as UIKit.Container;
+      const presetEmpty = this.document.getElementById("preset-empty") as UIKit.Text;
+      const presetClose = this.document.getElementById("preset-close-button") as UIKit.Text;
+      const presetMore = this.document.getElementById("preset-load-more") as UIKit.Text;
+      const presetBtn = this.document.getElementById("preset-models-button") as UIKit.Text;
+
       // bind esplicito ai bottoni degli 8 slot
       const slotButtons: UIKit.Text[] = [];
       for (let i = 1; i <= 4; i++) {
@@ -119,6 +140,19 @@ export class PanelSystem extends createSystem({
           btn.addEventListener("click", async (e: any) => {
             if (!this._consumeOnce(e)) return;
             await this._onSavedSlotClick(i - 1); // indice 0..7
+          });
+        }
+      }
+
+      // -------------------------
+      // bind bottoni PRESET (4 slot)
+      // -------------------------
+      for (let i = 1; i <= 4; i++) {
+        const btn = this.document.getElementById(`preset-btn-${i}`) as UIKit.Text;
+        if (btn) {
+          btn.addEventListener("click", async (e: any) => {
+            if (!this._consumeOnce(e)) return;
+            await this._onPresetSlotClick(i - 1); // indice 0..3
           });
         }
       }
@@ -133,20 +167,20 @@ export class PanelSystem extends createSystem({
         this.pickView("side", frontBtn, sideBtn);
       });
 
-      generaButton.addEventListener("click", (e: any) => {
+      /* generaButton.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
         this.handleGenerateWithRigging(this.document!, textPrompt);
-      });
+      }); */
 
       noRiggingButton.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
         this.handleGenerateNoRigging(this.document!, textPrompt);
       });
 
-      musicButton.addEventListener("click", (e: any) => {
+      /* musicButton.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
         this.playMusic();
-      });
+      }); */
 
       vrButton.addEventListener("click", (e: any) => {
         if (!this._consumeOnce(e)) return;
@@ -175,7 +209,7 @@ export class PanelSystem extends createSystem({
         }
 
         if (!isActive) {
-          const gltf = AssetManager.getGLTF("environmentDesk");
+          const gltf = AssetManager.getGLTF("simpHouse");
           const envMeshNew = gltf.scene.clone(true);
 
           // togli l’environment dal raycast della UI
@@ -192,7 +226,7 @@ export class PanelSystem extends createSystem({
 
           isActive = true;
         } else {
-          const gltf = AssetManager.getGLTF("simpHouse");
+          const gltf = AssetManager.getGLTF("environmentDesk");
           const envMeshNewNew = gltf.scene.clone(true);
 
           envMeshNewNew.traverse((o: any) => {
@@ -230,6 +264,29 @@ export class PanelSystem extends createSystem({
         const totalPages = Math.ceil(total / this.pageSize);
         this.savedPage = (this.savedPage + 1) % Math.max(totalPages, 1);
         this.renderSavedList(savedList, savedEmpty, { reset: true });
+      });
+
+      // -------------------------
+      // handler pannello "Preset Models
+      // -------------------------
+      presetBtn.addEventListener("click", async (e: any) => {
+        if (!this._consumeOnce(e)) return;
+        await this.openPresetPanel(presetPanel, presetList, presetEmpty);
+      });
+
+      presetClose.addEventListener("click", (e: any) => {
+        if (!this._consumeOnce(e)) return;
+        this.closePresetPanel(presetPanel);
+      });
+
+      presetMore.addEventListener("click", (e: any) => {
+        if (!this._consumeOnce(e)) return;
+        const total = this.presets.length;
+        if (total === 0) return;
+
+        const totalPages = Math.ceil(total / this.presetPageSize);
+        this.presetPage = (this.presetPage + 1) % Math.max(totalPages, 1);
+        this.renderPresetList(presetList, presetEmpty, { reset: true });
       });
     });
   }
@@ -310,6 +367,12 @@ export class PanelSystem extends createSystem({
         if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
           this.closeSavedPanel(savedPanel);
         }
+
+        // ✅ Chiudi il pannello "Preset Models" se era aperto (AGGIUNTO)
+        const presetPanel = this.document?.getElementById("preset-panel") as UIKit.Container;
+        if (presetPanel && presetPanel.properties?.value?.visibility === "visible") {
+          this.closePresetPanel(presetPanel);
+        }
       }
     }
 
@@ -332,7 +395,7 @@ export class PanelSystem extends createSystem({
     }
   }
 
-  /** Genera un modello 3D con rigging */
+  /** Genera un modello 3D con rigging
   private async handleGenerateWithRigging(document: UIKitDocument, textPrompt: UIKit.Text) {
     const prompt = this.buildPrompt(textPrompt?.currentSignal?.v);
     console.log("Prompt inserito:", prompt);
@@ -384,7 +447,7 @@ export class PanelSystem extends createSystem({
     } catch (error) {
       this.onGenerationError(error as Error, textPrompt);
     }
-  }
+  } */
 
   /** Genera un modello 3D senza rigging */
   private async handleGenerateNoRigging(document: UIKitDocument, textPrompt: UIKit.Text) {
@@ -397,6 +460,12 @@ export class PanelSystem extends createSystem({
     const savedPanel = this.document?.getElementById("saved-panel") as UIKit.Container;
     if (savedPanel && savedPanel.properties?.value?.visibility === "visible") {
       this.closeSavedPanel(savedPanel);
+    }
+
+    //Chiudi il pannello "Preset Models" se era aperto
+    const presetPanel = this.document?.getElementById("preset-panel") as UIKit.Container;
+    if (presetPanel && presetPanel.properties?.value?.visibility === "visible") {
+      this.closePresetPanel(presetPanel);
     }
 
 
@@ -527,7 +596,7 @@ export class PanelSystem extends createSystem({
     console.warn("Errore nella generazione!!.");
   }
 
-  /** Music button handler */
+  /** Music button handler
   private playMusic = () => {
     console.log("Toggling music playback");
     if (!this.musicEntity || !this.musicEntity.hasComponent(AudioSource)) {
@@ -546,7 +615,7 @@ export class PanelSystem extends createSystem({
     } else {
       AudioUtils.pause(this.musicEntity, 0.2);
     }
-  };
+  }; */
 
   /** VR/AR button handler */
   private vrButtonClick = () => {
@@ -703,5 +772,180 @@ export class PanelSystem extends createSystem({
       try { e.destroy?.(); } catch { }
     }
     this._entitiesByModelId.delete(modelId);
+  }
+
+  // -------------------------
+  // PRESET: FETCH LIST + BLOB
+  // -------------------------
+  // Endpoint atteso:
+  // - GET  /api/presets            -> JSON array [{id,name,ts},...]
+  // - GET  /api/presets/<presetId> -> blob GLB/GLTF
+  private async fetchPresets(): Promise<Array<{ id: string; name?: string; prompt?: string; ts?: number }>> {
+    const res = await fetch("/api/presets", { method: "GET" });
+    console.log("GET /api/presets →", res.status);
+
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg || "Impossibile recuperare la lista preset");
+    }
+
+    const data = await res.json();
+    const items = Array.isArray(data) ? data : (data?.items ?? []);
+    return items;
+  }
+
+  private async getPresetModelBlob(presetId: string): Promise<Blob> {
+    const res = await fetch(`/api/presets/${encodeURIComponent(presetId)}`, { method: "GET" });
+    console.log("GET /api/presets/", presetId, "→", res.status);
+
+    if (!res.ok) {
+      const msg = await res.text();
+      throw new Error(msg || `Impossibile recuperare il preset ${presetId}`);
+    }
+    return res.blob();
+  }
+
+  // -------------------------
+  // PRESET PANEL HELPERS
+  // -------------------------
+  private async openPresetPanel(presetPanel: UIKit.Container, presetList: UIKit.Container, presetEmpty: UIKit.Text) {
+    presetPanel.setProperties({ visibility: "visible" });
+
+    presetList.setProperties({ visibility: "visible" });
+    presetEmpty.setProperties({ visibility: "visible" });
+
+    this.presetPage = 0;
+
+    try {
+      this.presets = await this.fetchPresets();
+    } catch (err) {
+      console.error("Errore fetch preset:", err);
+      this.presets = [];
+    }
+
+    this.renderPresetList(presetList, presetEmpty, { reset: true });
+  }
+
+  private closePresetPanel(presetPanel: UIKit.Container) {
+    presetPanel.setProperties({ visibility: "hidden" });
+
+    const list = this.document?.getElementById("preset-list") as UIKit.Container;
+    const empty = this.document?.getElementById("preset-empty") as UIKit.Text;
+
+    empty?.setProperties({ visibility: "hidden" });
+    list?.setProperties({ visibility: "hidden" });
+
+    for (let i = 1; i <= 4; i++) {
+      const row = this.document?.getElementById(`preset-row-${i}`) as UIKit.Container;
+      const label = this.document?.getElementById(`preset-label-${i}`) as UIKit.Text;
+      const btn = this.document?.getElementById(`preset-btn-${i}`) as UIKit.Text;
+
+      row?.setProperties({ visibility: "hidden" });
+      label?.setProperties({ visibility: "hidden" });
+      btn?.setProperties({ visibility: "hidden" });
+    }
+  }
+
+  private renderPresetList(
+    presetList: UIKit.Container,
+    presetEmpty: UIKit.Text,
+    opts: { reset?: boolean; append?: boolean } = {}
+  ) {
+    const itemsAll = [...this.presets].sort((a, b) => (b.ts ?? 0) - (a.ts ?? 0));
+    const hasItems = itemsAll.length > 0;
+    presetEmpty.setProperties({ visibility: hasItems ? "hidden" : "visible" });
+
+    const start = this.presetPage * this.presetPageSize;
+    const pageItems = itemsAll.slice(start, start + this.presetPageSize);
+
+    this._slotPresetIds = new Array(this.presetPageSize).fill("");
+
+    for (let i = 0; i < this.presetPageSize; i++) {
+      const row = this.document!.getElementById(`preset-row-${i + 1}`) as UIKit.Container;
+      const label = this.document!.getElementById(`preset-label-${i + 1}`) as UIKit.Text;
+      const btn = this.document!.getElementById(`preset-btn-${i + 1}`) as UIKit.Text;
+
+      const it = pageItems[i];
+      if (!row || !label || !btn) continue;
+
+      if (!it) {
+        row.setProperties({ visibility: "hidden" });
+        label.setProperties({ text: "—", visibility: "hidden" });
+        btn.setProperties({ visibility: "hidden" });
+        continue;
+      }
+
+      const title = it.name || it.prompt || it.id;
+      const shortTitle = title && title.length > 48 ? (title.slice(0, 48) + "…") : (title || "");
+      this._slotPresetIds[i] = it.id;
+
+      label.setProperties({ text: shortTitle, visibility: "visible" });
+      btn.setProperties({
+        visibility: "visible",
+        text: this._isPresetLoaded(it.id) ? "Elimina" : "Carica",
+      });
+      row.setProperties({ visibility: "visible" });
+    }
+  }
+
+  private async _onPresetSlotClick(slotIndex: number) {
+    const presetId = this._slotPresetIds?.[slotIndex];
+    if (!presetId) {
+      console.warn("Nessun presetId associato allo slot", slotIndex);
+      return;
+    }
+
+    const btn = this.document?.getElementById(`preset-btn-${slotIndex + 1}`) as UIKit.Text;
+    const isLoaded = this._isPresetLoaded(presetId);
+
+    // --- ELIMINA ---
+    if (isLoaded || btn?.properties.value.text === "Elimina") {
+      this._unloadPreset(presetId);
+      btn?.setProperties?.({ text: "Carica" });
+      console.log("Eliminato preset in scena:", presetId);
+      return;
+    }
+
+    // --- CARICA ---
+    try {
+      console.log("Carico preset:", presetId);
+      btn?.setProperties?.({ text: "Elimina" });
+
+      const blob = await this.getPresetModelBlob(presetId);
+      const key = `presetModel-${presetId}`;
+      await this.loadModelFromBlob(blob, key);
+
+      const ent = this.placeLoadedModel(key, { x: 0, y: 1, z: -1.2 });
+      setTimeout(() => {
+        ent.addComponent(Interactable).addComponent(TwoHandsGrabbable, {
+          translate: true, rotate: true, scale: true,
+        });
+      }, 100);
+
+      this._markPresetLoaded(presetId, ent);
+    } catch (err) {
+      console.error("Errore nel recupero preset:", err);
+      const promptInput = this.document!.getElementById("text-area") as UIKit.Text;
+      promptInput?.setProperties?.({ placeholder: "Errore nel recupero preset." });
+      btn?.setProperties?.({ text: "Carica" });
+    }
+  }
+
+  private _isPresetLoaded(presetId: string): boolean {
+    return (this._entitiesByPresetId.get(presetId)?.length ?? 0) > 0;
+  }
+
+  private _markPresetLoaded(presetId: string, ent: Entity) {
+    const arr = this._entitiesByPresetId.get(presetId) ?? [];
+    arr.push(ent);
+    this._entitiesByPresetId.set(presetId, arr);
+  }
+
+  private _unloadPreset(presetId: string) {
+    const arr = this._entitiesByPresetId.get(presetId) ?? [];
+    for (const e of arr) {
+      try { e.destroy?.(); } catch { }
+    }
+    this._entitiesByPresetId.delete(presetId);
   }
 }
