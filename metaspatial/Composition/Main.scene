@@ -12,8 +12,8 @@ entities:
   com.meta.models.SceneNode:
     - components:
         com.iwsdk.components.AudioSource:
-          maxInstances: 3
           playbackMode: 3
+          maxInstances: 3
           src: /audio/chime.mp3
         com.iwsdk.components.Interactable:
           {}
@@ -36,7 +36,7 @@ entities:
             - 0.5
           translation:
             - -1.20000005
-            - 0.949999988
+            - -15.5658617
             - -1.79999995
           componentVersion: 1
         com.meta.components.Visibility:
@@ -64,7 +64,7 @@ entities:
             - 1
           translation:
             - 1.20000005
-            - 0.850000024
+            - -18.7126255
             - -1.79999995
           componentVersion: 1
         com.meta.components.Visibility:
@@ -92,9 +92,9 @@ entities:
             - 1
             - 1
           translation:
-            - 0
+            - 0.600000024
             - 1.60000002
-            - -2
+            - -0.799993992
           componentVersion: 1
         com.meta.components.Visibility:
           visible: true
