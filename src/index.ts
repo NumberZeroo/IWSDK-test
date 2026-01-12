@@ -29,7 +29,7 @@ const assets: AssetManifest = {
     priority: "background",
   },
     simpHouse: {
-    url: "/gltf/simp/scene.gltf",
+    url: "/gltf/park/scene.gltf",
     type: AssetType.GLTF,
     priority: "critical",
   },
