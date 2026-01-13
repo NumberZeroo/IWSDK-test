@@ -62,12 +62,17 @@ def generate_glb():
         as_attachment=True,
         download_name="model.glb"
     ))
+    
+    data = request.json
+    prompt = data.get("prompt", "AI_Model")
+    with open(out_dir / "prompt.txt", "w", encoding="utf-8") as f:
+        f.write(prompt)
+        
     resp.headers["X-Model-Id"] = uid
     return resp
 
 @app.route("/models", methods=["GET"])
 def list_generated_models():
-    """Recupera la lista di tutti i modelli precedentemente sintetizzati dall'AI."""
     items = []
     if TEMP_DIR.exists():
         for folder in TEMP_DIR.glob("*_out"):
@@ -75,10 +80,15 @@ def list_generated_models():
             mesh_files = list(folder.glob("**/mesh.glb"))
             if mesh_files:
                 p = mesh_files[0]
+                # AGGIUNTA: Leggi il prompt dal file di testo se esiste
+                prompt_file = p.parent / "prompt.txt"
+                name = prompt_file.read_text(encoding="utf-8") if prompt_file.exists() else f"AI_{model_id[:5]}"
+                
                 items.append({
                     "id": model_id,
-                    "name": f"AI_Gen_{model_id[:5]}",
-                    "size": f"{(p.stat().st_size / 1024 / 1024):.1f}MB"
+                    "name": name,
+                    "size": f"{(p.stat().st_size / 1024 / 1024):.1f}MB",
+                    "ts": int(folder.stat().st_mtime * 1000)
                 })
     return jsonify(items), 200
 
