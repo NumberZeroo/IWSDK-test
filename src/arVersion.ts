@@ -15,8 +15,6 @@ import { PanelSystem } from "./panel.js";
 
 import { RobotSystem } from "./robot.js";
 
-import { EnvironmentType, LocomotionEnvironment } from "@iwsdk/core";
-
 const assets: AssetManifest = {
   chimeSound: {
     url: "/audio/chime.mp3",
