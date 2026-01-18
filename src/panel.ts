@@ -102,11 +102,9 @@ export class PanelSystem extends createSystem({
     }
       else if (mode === "saved") {
         try {
-            // --- SINCRONIZZAZIONE REALE ---
-            // Chiediamo al server la lista di TUTTI i file in temp_assets
             const res = await fetch("http://localhost:5000/models");
             const data = await res.json();
-            // Aggiorniamo l'array locale con quello che il server ha davvero su disco
+            
             this.saved = Array.isArray(data) ? data : [];
         } catch (e) {
             console.error("Errore sync backend", e);
