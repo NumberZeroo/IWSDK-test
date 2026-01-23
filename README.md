@@ -23,7 +23,7 @@ The **actual backend is not included** here. However, a **mock backend** is prov
 ## Getting Started
 
 ```bash
-git clone https://github.com/NumberZeroo/IWSDK-test.git
+git clone https://github.com/NumberZeroo/TextTo3D-FE-IWSDK-.git
 cd IWSDK-test
 npm install
 npm run dev
